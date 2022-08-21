@@ -1,0 +1,100 @@
+{
+  "version": 2,
+  "dgSpecHash": "vLiblgpPrehO5/ylaXPBeRy7h1kh1eSgHNdPqPEzfj+lnSNBMT5rEOLouiv0098Hev2KvS4wVK4jis5tUpgExg==",
+  "success": true,
+  "projectFilePath": "/Users/adam.cherry/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj",
+  "expectedPackageFiles": [
+    "/Users/adam.cherry/.nuget/packages/microsoft.extensions.apidescription.server/3.0.0/microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "/Users/adam.cherry/.nuget/packages/microsoft.openapi/1.2.3/microsoft.openapi.1.2.3.nupkg.sha512",
+    "/Users/adam.cherry/.nuget/packages/swashbuckle.aspnetcore/6.2.3/swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
+    "/Users/adam.cherry/.nuget/packages/swashbuckle.aspnetcore.swagger/6.2.3/swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
+    "/Users/adam.cherry/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.2.3/swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",
+    "/Users/adam.cherry/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.2.3/swashbuckle.aspnetcore.swaggerui.6.2.3.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore.Swagger"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore.SwaggerGen"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore.SwaggerUI"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Microsoft.Extensions.ApiDescription.Server"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore.Swagger"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Microsoft.OpenApi"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore.SwaggerGen"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Microsoft.Extensions.ApiDescription.Server"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Swashbuckle.AspNetCore.SwaggerUI"
+    },
+    {
+      "code": "NU1801",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
+      "libraryId": "Microsoft.OpenApi"
+    }
+  ]
+}
