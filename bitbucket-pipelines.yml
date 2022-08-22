@@ -8,6 +8,9 @@
 
 image: mcr.microsoft.com/dotnet/sdk:6.0
 
+clone:
+ depth: full
+
 pipelines:
   default:
     - parallel:
@@ -38,7 +41,4 @@ pipelines:
             name: Deploy to production
             deployment: production
             script:
-              - pipe: atlassian/heroku-deploy:2.0.0
-                variables:
-                  HEROKU_API_KEY: 'cf321cd1-80a6-4df6-9087-e5a81e56932d'
-                  HEROKU_APP_NAME: 'news-inz-api'
+              - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD
