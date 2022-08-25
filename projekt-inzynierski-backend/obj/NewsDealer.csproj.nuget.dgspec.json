@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj": {}
+    "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/NewsDealer.csproj": {}
   },
   "projects": {
-    "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj": {
+    "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/NewsDealer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj",
+        "projectUniqueName": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/NewsDealer.csproj",
         "projectName": "NewsDealer_API",
-        "projectPath": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj",
+        "projectPath": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/NewsDealer.csproj",
         "packagesPath": "/Users/adam.cherry/.nuget/packages/",
         "outputPath": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/obj/",
         "projectStyle": "PackageReference",

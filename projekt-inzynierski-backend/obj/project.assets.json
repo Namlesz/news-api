@@ -213,11 +213,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/adam.cherry/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj",
-      "projectName": "projekt-inzynierski-backend",
-      "projectPath": "/Users/adam.cherry/projekt-inzynierski-backend/projekt-inzynierski-backend/projekt-inzynierski-backend.csproj",
+      "projectUniqueName": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/NewsDealer.csproj",
+      "projectName": "NewsDealer_API",
+      "projectPath": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/NewsDealer.csproj",
       "packagesPath": "/Users/adam.cherry/.nuget/packages/",
-      "outputPath": "/Users/adam.cherry/projekt-inzynierski-backend/projekt-inzynierski-backend/obj/",
+      "outputPath": "/Users/adam.cherry/repos/projekt-inzynierski-backend/projekt-inzynierski-backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/adam.cherry/.nuget/NuGet/NuGet.Config"
@@ -272,91 +272,5 @@
         "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.302/RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore.Swagger"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore.SwaggerGen"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore.SwaggerUI"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Microsoft.Extensions.ApiDescription.Server"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore.Swagger"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Microsoft.OpenApi"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore.SwaggerGen"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Microsoft.Extensions.ApiDescription.Server"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Swashbuckle.AspNetCore.SwaggerUI"
-    },
-    {
-      "code": "NU1801",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "The local source '/Volumes/sites/NugetPackages' doesn't exist.",
-      "libraryId": "Microsoft.OpenApi"
-    }
-  ]
+  }
 }

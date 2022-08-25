@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace projekt_inzynierski_backend.Controllers;
+namespace NewsDealer_API.Controllers;
 
 [ApiController]
 [Route("[controller]")]

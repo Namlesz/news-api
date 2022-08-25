@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "projekt_inzynierski_backend": {
+    "NewsDealer_API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

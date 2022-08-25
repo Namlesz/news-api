@@ -1,4 +1,4 @@
-namespace projekt_inzynierski_backend;
+namespace NewsDealer_API;
 
 public class WeatherForecast
 {
