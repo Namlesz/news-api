@@ -1,6 +1,13 @@
+using news_api.Data;
+using news_api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<NewsDatabaseSettings>(
+    builder.Configuration.GetSection("NewsDatabase"));
+
+builder.Services.AddSingleton<NewsService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
