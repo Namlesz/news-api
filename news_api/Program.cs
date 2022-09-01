@@ -1,13 +1,25 @@
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using news_api.Data;
-using news_api.Services;
+using news_api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<NewsDatabaseSettings>(
-    builder.Configuration.GetSection("NewsDatabase"));
 
-builder.Services.AddSingleton<NewsService>();
+// Configure MongoDB connection
+builder.Services.Configure<NewsDatabaseSettings>(builder.Configuration.GetSection("NewsDatabase"));
+
+builder.Services.AddSingleton<IMongoDatabase>(sp => {
+    var databaseSettings = sp.GetRequiredService<IOptions<NewsDatabaseSettings>>().Value;
+    var mongoDbClient = new MongoClient(databaseSettings.ConnectionString);
+    var mongoDb = mongoDbClient.GetDatabase(databaseSettings.DatabaseName);
+
+    return mongoDb;
+});
+
+// Add repositories to the container.
+builder.Services.AddScoped<UsersRepositories>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
