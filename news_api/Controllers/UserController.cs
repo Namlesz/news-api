@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using news_api.Auth;
 using news_api.Models;
 using news_api.Repositories;
 
@@ -14,23 +16,24 @@ public class UserController : ControllerBase
     {
         _usersCollection = usersCollection;
     }
-
-    [HttpGet("{email}")]
-    public async Task<IActionResult> Get(string email)
+    
+    [HttpGet]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> GetAll()
     {
-        var user = await _usersCollection.GetUserByEmail(email);
+        var users = await _usersCollection.GetAll();
+        return Ok(users);
+    }
+
+    [HttpGet("{id:length(24)}")]
+    public async Task<IActionResult> Get(string id)
+    {
+        var user = await _usersCollection.GetUserById(id);
         if (user == null)
         {
             return NotFound();
         }
 
         return Ok(user);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Register(User user)
-    {
-        await _usersCollection.InsertUser(user);
-        return CreatedAtAction(nameof(Get), new { email = user.Email }, user);
     }
 }

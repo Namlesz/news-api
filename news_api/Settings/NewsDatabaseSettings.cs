@@ -1,4 +1,4 @@
-namespace news_api.Data;
+namespace news_api.Settings;
 
 public class NewsDatabaseSettings
 {
