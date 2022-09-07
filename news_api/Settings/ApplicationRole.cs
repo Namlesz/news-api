@@ -6,4 +6,5 @@ namespace news_api.Settings;
 [CollectionName("Roles")]
 public class ApplicationRole : MongoIdentityRole<Guid>
 {
+    
 }

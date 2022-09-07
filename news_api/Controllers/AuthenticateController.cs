@@ -48,9 +48,9 @@ public class AuthenticateController : ControllerBase
             }
 
             var token = GetToken(authClaims);
-
             return Ok(new
             {
+                userId = user.Id,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
             });

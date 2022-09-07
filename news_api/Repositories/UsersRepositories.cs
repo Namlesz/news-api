@@ -29,6 +29,6 @@ public class UsersRepositories
         await _users.Find(user => user.Email == email).FirstOrDefaultAsync();
     
     public async Task<User?> GetUserById(string id) =>
-        await _users.Find(user => user.Id == id).FirstOrDefaultAsync();
+        await _users.Find(user => user.Id == Guid.Parse(id)).FirstOrDefaultAsync();
 
 }
