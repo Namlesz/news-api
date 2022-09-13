@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
 
@@ -20,7 +19,7 @@ public class User
     public string Surname { get; set; } = null!;
 
     [BsonElement("UserName")]
-    [Required(ErrorMessage = "User Name is required")]
+    [Required(ErrorMessage = "Nick jest wymagany")]
     public string? Username { get; set; }
 
     [Required(ErrorMessage = "Email jest wymagany")]

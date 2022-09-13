@@ -58,6 +58,7 @@ builder.Services.Configure<IdentityOptions>(opts =>
 {
     opts.User.RequireUniqueEmail = true;
     opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    opts.SignIn.RequireConfirmedEmail = true;
 });
 
 // Add repositories to the container.

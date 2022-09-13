@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using news_api.Auth;
+using news_api.Helpers;
 using news_api.Models;
 using news_api.Settings;
 
@@ -31,8 +32,14 @@ public class AuthenticateController : ControllerBase
     [Route("login")]
     public async Task<IActionResult> Login(Login login)
     {
-        var user = await _userManager.FindByNameAsync(login.Username);
-        if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
+        var user = await _userManager.FindByEmailAsync(login.Email);
+        if (user == null)
+            return NotFound("User not found");
+
+        if (! await _userManager.IsEmailConfirmedAsync(user))
+            return Unauthorized("Email not confirmed");
+
+        if (await _userManager.CheckPasswordAsync(user, login.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -63,7 +70,8 @@ public class AuthenticateController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register(User model)
     {
-        var userExists = await _userManager.FindByNameAsync(model.Name);
+        var userExists = await _userManager.FindByEmailAsync(model.Email);
+        
         if (userExists != null)
             return Problem("User already exists!");
 
@@ -71,12 +79,25 @@ public class AuthenticateController : ControllerBase
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username
+            UserName = model.Username,
+            Name = model.Name,
+            Surname =  model.Surname,
         };
         
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
             return Problem("User creation failed! Please check user details and try again.");
+        
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+        EmailHelper emailHelper = new EmailHelper();
+        
+        bool emailResponse = emailHelper.SendConfirmEmail(user.Email, confirmationLink!);
+             
+        if (!emailResponse)
+        {
+            return Problem("Confirmation email failed to send.");
+        }
 
         return Ok("User created successfully!");
     }
@@ -93,7 +114,9 @@ public class AuthenticateController : ControllerBase
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username
+            UserName = model.Username,
+            Name = model.Name,
+            Surname =  model.Surname,
         };
         
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -118,7 +141,23 @@ public class AuthenticateController : ControllerBase
 
         return Ok("User created successfully!");
     }
+    
+    [HttpGet]
+    [Route("[controller]")]
+    public async Task<IActionResult> ConfirmEmail(string token, string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return NotFound("User not found");
+ 
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+            return Problem("Email confirmation failed!");
+        
+        return Ok("Email confirmed successfully!");
+    }            
 
+    
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -126,7 +165,7 @@ public class AuthenticateController : ControllerBase
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(3),
+            expires: DateTime.Now.AddHours(1),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
