@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using news_api.Auth;
+using news_api.Models;
 using news_api.Repositories;
 
 namespace news_api.Controllers;

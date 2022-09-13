@@ -4,7 +4,6 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using news_api.Auth;
 using news_api.Helpers;
 using news_api.Models;
 using news_api.Settings;
@@ -12,6 +11,7 @@ using news_api.Settings;
 namespace news_api.Controllers;
 
 [ApiController]
+[Route("[action]")]
 public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -29,135 +29,151 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    [Route("login")]
     public async Task<IActionResult> Login(Login login)
     {
         var user = await _userManager.FindByEmailAsync(login.Email);
         if (user == null)
             return NotFound("User not found");
 
-        if (! await _userManager.IsEmailConfirmedAsync(user))
+        if (!await _userManager.IsEmailConfirmedAsync(user))
             return Unauthorized("Email not confirmed");
 
-        if (await _userManager.CheckPasswordAsync(user, login.Password))
+        if (!await _userManager.CheckPasswordAsync(user, login.Password))
+            return Unauthorized("Invalid password");
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var authClaims = new List<Claim>
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
 
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
-
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
-
-            var token = GetToken(authClaims);
-            return Ok(new
-            {
-                userId = user.Id,
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
-            });
+        foreach (var userRole in userRoles)
+        {
+            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
         }
 
-        return Unauthorized();
+        var token = GetToken(authClaims);
+        return Ok(new
+        {
+            userId = user.Id,
+            token = new JwtSecurityTokenHandler().WriteToken(token),
+            expiration = token.ValidTo
+        });
     }
 
     [HttpPost]
-    [Route("register")]
-    public async Task<IActionResult> Register(User model)
+    public async Task<IActionResult> Register(User data)
     {
-        var userExists = await _userManager.FindByEmailAsync(model.Email);
-        
-        if (userExists != null)
+        if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Problem("User already exists!");
 
-        ApplicationUser user = new ApplicationUser
-        {
-            Email = model.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username,
-            Name = model.Name,
-            Surname =  model.Surname,
-        };
-        
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (!result.Succeeded)
+        var user = await CreateUser(data);
+        if (user == null)
             return Problem("User creation failed! Please check user details and try again.");
-        
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
-        EmailHelper emailHelper = new EmailHelper();
-        
-        bool emailResponse = emailHelper.SendConfirmEmail(user.Email, confirmationLink!);
-             
-        if (!emailResponse)
-        {
+
+        if (!await SendConfirmationEmail(user))
             return Problem("Confirmation email failed to send.");
-        }
 
         return Ok("User created successfully!");
     }
 
     [HttpPost]
-    [Route("register-admin")]
-    public async Task<IActionResult> RegisterAdmin(User model)
+    public async Task<IActionResult> RegisterAdmin(User data)
     {
-        var userExists = await _userManager.FindByNameAsync(model.Username);
-        if (userExists != null)
+        if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
 
-        ApplicationUser user = new ApplicationUser
-        {
-            Email = model.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.Username,
-            Name = model.Name,
-            Surname =  model.Surname,
-        };
-        
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (!result.Succeeded)
-            return Problem("User creation failed! Please check user details and try again." );
+        var user = await CreateUser(data);
+        if (user == null)
+            return Problem("User creation failed! Please check user details and try again.");
 
-        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            await _roleManager.CreateAsync(new ApplicationRole() { Name = UserRoles.Admin });
-        
-        if (!await _roleManager.RoleExistsAsync(UserRoles.Editor))
-            await _roleManager.CreateAsync(new ApplicationRole() { Name = UserRoles.Editor });
-
-        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        foreach (var role in Enum.GetNames(typeof(Roles)))
         {
-            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+            if (await _roleManager.RoleExistsAsync(role))
+            {
+                await _userManager.AddToRoleAsync(user, role);
+            }
         }
 
-        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-        {
-            await _userManager.AddToRoleAsync(user, UserRoles.Editor);
-        }
+        if (!await SendConfirmationEmail(user))
+            return Problem("Confirmation email failed to send.");
 
         return Ok("User created successfully!");
     }
-    
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(string email, string token, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return NotFound("User not found");
+
+        var result = await _userManager.ResetPasswordAsync(user, token, password);
+        if (!result.Succeeded)
+            return Problem("Password change failed");
+
+        return Ok("Password changed successfully");
+    }
+
     [HttpGet]
-    [Route("[controller]")]
+    public async Task<IActionResult> ResetPassword(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return NotFound("User not found");
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var passwordResetLink = Url.Action("ChangePassword", "Authenticate", new { token, email }, Request.Scheme);
+        EmailHelper emailHelper = new EmailHelper();
+
+        if (passwordResetLink == null || !emailHelper.SendResetPasswordEmail(email, passwordResetLink))
+            return Problem("Unable to send password reset email");
+
+        return Ok("Password reset link sent to email");
+    }
+
+    [HttpGet]
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
             return NotFound("User not found");
- 
+
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded)
             return Problem("Email confirmation failed!");
-        
-        return Ok("Email confirmed successfully!");
-    }            
 
-    
+        return Ok("Email confirmed successfully! You can now login.");
+    }
+
+    private async Task<bool> SendConfirmationEmail(ApplicationUser user)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var confirmationLink = token; // TO DO: change to url 
+            //Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+
+        EmailHelper emailHelper = new EmailHelper();
+
+        return emailHelper.SendConfirmEmail(user.Email, confirmationLink!);
+    }
+
+    private async Task<ApplicationUser?> CreateUser(User data)
+    {
+        ApplicationUser user = new ApplicationUser
+        {
+            Email = data.Email,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            UserName = data.Username,
+            Name = data.Name,
+            Surname = data.Surname,
+        };
+
+        var result = await _userManager.CreateAsync(user, data.Password);
+        return result.Succeeded ? user : null;
+    }
+
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));

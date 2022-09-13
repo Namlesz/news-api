@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using news_api.Helpers;
 using news_api.Repositories;
 using news_api.Settings;
 
@@ -65,11 +66,15 @@ builder.Services.Configure<IdentityOptions>(opts =>
 builder.Services.AddScoped<UsersRepositories>();
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Initialize Roles in database
+DataInitializer.SeedRoles(app.Services).Wait();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
