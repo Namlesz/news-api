@@ -29,7 +29,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(Login login)
+    public async Task<IActionResult> Login([FromBody] Login login)
     {
         var user = await _userManager.FindByEmailAsync(login.Email);
         if (user == null)
@@ -64,7 +64,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(User data)
+    public async Task<IActionResult> Register([FromBody] User data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Problem("User already exists!");
@@ -80,7 +80,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> RegisterAdmin(User data)
+    public async Task<IActionResult> RegisterAdmin([FromBody] User data)
     {
         if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
@@ -104,7 +104,8 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangePassword(string email, string token, string password)
+    public async Task<IActionResult> ChangePassword([FromQuery] string email, [FromQuery] string token,
+        [FromQuery] string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -118,7 +119,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> ResetPassword(string email)
+    public async Task<IActionResult> ResetPassword([FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -135,7 +136,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> ConfirmEmail(string token, string email)
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -148,11 +149,13 @@ public class AuthenticateController : ControllerBase
         return Ok("Email confirmed successfully! You can now login.");
     }
 
+    #region Private Methods
+
     private async Task<bool> SendConfirmationEmail(ApplicationUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var confirmationLink = token; // TO DO: change to url 
-            //Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+        //Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
         EmailHelper emailHelper = new EmailHelper();
 
@@ -188,4 +191,6 @@ public class AuthenticateController : ControllerBase
 
         return token;
     }
+
+    #endregion
 }

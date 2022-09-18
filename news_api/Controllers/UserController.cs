@@ -18,18 +18,19 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> GetAll() => 
+    public async Task<IActionResult> GetAll() =>
         Ok(await _usersCollection.GetAll());
 
-    [HttpGet("{id:length(36)}")]
+
+    [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetUserInfo(string id)
+    public async Task<IActionResult> GetUserInfo([FromQuery] string id)
     {
         if (!Guid.TryParse(id, out var guid))
         {
             return Problem("Invalid id format");
         }
-        
+
         var user = await _usersCollection.GetUserById(guid);
         if (user == null)
         {
