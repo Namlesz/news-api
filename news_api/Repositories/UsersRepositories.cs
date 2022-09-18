@@ -9,6 +9,11 @@ public class UsersRepositories
 {
     private readonly IMongoCollection<User> _users;
     
+    public UsersRepositories(IMongoCollection<User> db)
+    {
+        _users = db;
+    }
+    
     public UsersRepositories(
         IOptions<NewsDatabaseSettings> databaseOptions,
         IMongoDatabase mongoDatabase)
@@ -28,7 +33,7 @@ public class UsersRepositories
     public async Task<User?> GetUserByEmail(string email) =>
         await _users.Find(user => user.Email == email).FirstOrDefaultAsync();
     
-    public async Task<User?> GetUserById(string id) =>
-        await _users.Find(user => user.Id == Guid.Parse(id)).FirstOrDefaultAsync();
+    public async Task<User?> GetUserById(Guid id) =>
+        await _users.Find(user => user.Id == id).FirstOrDefaultAsync();
 
 }

@@ -25,7 +25,12 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetUserInfo(string id)
     {
-        var user = await _usersCollection.GetUserById(id);
+        if (!Guid.TryParse(id, out var guid))
+        {
+            return Problem("Invalid id format");
+        }
+        
+        var user = await _usersCollection.GetUserById(guid);
         if (user == null)
         {
             return NotFound();

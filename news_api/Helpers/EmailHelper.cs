@@ -4,33 +4,32 @@ namespace news_api.Helpers;
 
 public class EmailHelper
 {
-    private readonly string _password;
-    private readonly string _email;
+    private readonly MailMessage _mailMessage;
+    private readonly SmtpClient _smtpClient;
 
     public EmailHelper()
     {
-         _password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? throw new InvalidOperationException();
-         _email = Environment.GetEnvironmentVariable("EMAIL_ACCOUNT") ?? throw new InvalidOperationException();
+        var password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? throw new InvalidOperationException();
+        var email = Environment.GetEnvironmentVariable("EMAIL_ACCOUNT") ?? throw new InvalidOperationException();
+
+        _mailMessage = new MailMessage();
+        _mailMessage.From = new MailAddress(email);
+        _mailMessage.IsBodyHtml = true;
+
+        _smtpClient = new SmtpClient("smtp.gmail.com", 587);
+        _smtpClient.Credentials = new System.Net.NetworkCredential(email, password);
+        _smtpClient.EnableSsl = true;
     }
-        
+
     public bool SendConfirmEmail(string userEmail, string confirmationLink)
     {
-        MailMessage mailMessage = new MailMessage();
-        mailMessage.From = new MailAddress(_email);
-        mailMessage.To.Add(new MailAddress(userEmail));
-        mailMessage.Subject = "Confirm your email";
-        mailMessage.IsBodyHtml = true;
-        mailMessage.Body = confirmationLink;
- 
-        SmtpClient client = new SmtpClient();
-        client.Credentials = new System.Net.NetworkCredential(_email, _password);
-        client.Host = "smtp.gmail.com";
-        client.Port = 587;
-        client.EnableSsl = true;
- 
+        _mailMessage.To.Add(new MailAddress(userEmail));
+        _mailMessage.Subject = "Confirm your email";
+        _mailMessage.Body = confirmationLink;
+
         try
         {
-            client.Send(mailMessage);
+            _smtpClient.Send(_mailMessage);
             return true;
         }
         catch (Exception ex)
@@ -39,28 +38,24 @@ public class EmailHelper
             if (isDevelopment)
                 Console.WriteLine(ex);
         }
+        finally
+        {
+            _mailMessage.Dispose();
+            _smtpClient.Dispose();
+        }
+
         return false;
     }
-    
+
     public bool SendResetPasswordEmail(string userEmail, string passwordResetLink)
     {
-        MailMessage mailMessage = new MailMessage();
-        mailMessage.From = new MailAddress(_email);
-        mailMessage.To.Add(new MailAddress(userEmail));
- 
-        mailMessage.Subject = "Change your password";
-        mailMessage.IsBodyHtml = true;
-        mailMessage.Body = passwordResetLink;
- 
-        SmtpClient client = new SmtpClient();
-        client.Credentials = new System.Net.NetworkCredential(_email, _password);
-        client.Host = "smtp.gmail.com";
-        client.Port = 587;
-        client.EnableSsl = true;
- 
+        _mailMessage.To.Add(new MailAddress(userEmail));
+        _mailMessage.Subject = "Change your password";
+        _mailMessage.Body = passwordResetLink;
+
         try
         {
-            client.Send(mailMessage);
+            _smtpClient.Send(_mailMessage);
             return true;
         }
         catch (Exception ex)
@@ -69,6 +64,12 @@ public class EmailHelper
             if (isDevelopment)
                 Console.WriteLine(ex);
         }
+        finally
+        {
+            _mailMessage.Dispose();
+            _smtpClient.Dispose();
+        }
+
         return false;
     }
 }
