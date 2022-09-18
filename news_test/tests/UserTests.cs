@@ -32,7 +32,7 @@ public class Tests
     [Description("Found a user by id")]
     public async Task GetUserInfo()
     {
-        var actionResult = await _controller!.GetUserInfo("12345678-1234-1234-1234-123456789123");
+        var actionResult = await _controller!.GetUserInfo("12345678-1233-1234-1234-123456789123");
 
         // Controller result
         var okResult = actionResult as OkObjectResult;
