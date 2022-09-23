@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using news_api.Models;
 using news_api.Repositories;
+using news_api.Settings;
 
 namespace news_api.Controllers;
 
@@ -38,5 +39,23 @@ public class UserController : ControllerBase
         }
 
         return Ok(user);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] User data)
+    {
+        var d = data;
+        if (!Guid.TryParse(id, out var guid))
+        {
+            return Problem("Invalid id format");
+        }
+
+        var user = await _usersCollection.GetUserById(guid);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return Ok();
     }
 }

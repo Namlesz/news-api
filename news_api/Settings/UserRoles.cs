@@ -1,6 +1,6 @@
 using MongoDbGenericRepository.Attributes;
 
-namespace news_api.Models;
+namespace news_api.Settings;
 
 [CollectionName("Roles")]
 public static class UserRoles

@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -29,16 +30,22 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody] Login login)
+    public async Task<IActionResult> Login([FromBody] JsonObject login)
     {
-        var user = await _userManager.FindByEmailAsync(login.Email);
+        var email = login["email"]?.ToString();
+        var password = login["password"]?.ToString();
+
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            return BadRequest("Username or password is empty");
+
+        var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
             return NotFound("User not found");
 
         if (!await _userManager.IsEmailConfirmedAsync(user))
             return Unauthorized("Email not confirmed");
 
-        if (!await _userManager.CheckPasswordAsync(user, login.Password))
+        if (!await _userManager.CheckPasswordAsync(user, password))
             return Unauthorized("Invalid password");
 
         var userRoles = await _userManager.GetRolesAsync(user);
@@ -154,7 +161,7 @@ public class AuthenticateController : ControllerBase
     private async Task<bool> SendConfirmationEmail(ApplicationUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = token; // TO DO: change to url 
+        var confirmationLink = token; // TODO: change to url 
         //Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
         EmailHelper emailHelper = new EmailHelper();

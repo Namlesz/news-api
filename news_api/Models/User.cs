@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
+using news_api.Interfaces;
 
 namespace news_api.Models;
 
 [BsonIgnoreExtraElements]
 [CollectionName("Users")]
-public class User
+public class User : IUser
 {
     [BsonId] 
     [BsonElement("_id")] 
@@ -22,6 +23,7 @@ public class User
     [Required(ErrorMessage = "Nick jest wymagany")]
     public string? Username { get; set; }
 
+    [EmailAddress] // To check
     [Required(ErrorMessage = "Email jest wymagany")]
     public string Email { get; set; } = null!;
 
