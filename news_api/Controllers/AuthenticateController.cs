@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -30,22 +29,16 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody] JsonObject login)
+    public async Task<IActionResult> Login([FromBody] Login login)
     {
-        var email = login["email"]?.ToString();
-        var password = login["password"]?.ToString();
-
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            return BadRequest("Username or password is empty");
-
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(login.Email);
         if (user == null)
             return NotFound("User not found");
 
         if (!await _userManager.IsEmailConfirmedAsync(user))
             return Unauthorized("Email not confirmed");
 
-        if (!await _userManager.CheckPasswordAsync(user, password))
+        if (!await _userManager.CheckPasswordAsync(user, login.Password))
             return Unauthorized("Invalid password");
 
         var userRoles = await _userManager.GetRolesAsync(user);
