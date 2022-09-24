@@ -8,24 +8,24 @@ namespace news_test.tests;
 
 public class Tests
 {
-    private IMongoCollection<User>? _connection;
+    private IMongoCollection<NewUser>? _connection;
     private UserController? _controller;
 
     [OneTimeSetUp]
     public void Setup()
     {
-        _connection = MongoDbCreator.CreateConnection<User>(nameof(User));
-        _connection?.InsertOne(new User
+        _connection = MongoDbCreator.CreateConnection<NewUser>(nameof(NewUser));
+        _connection?.InsertOne(new NewUser
         {
             Id = Guid.Parse("12345678-1234-1234-1234-123456789123"),
             Name = "Adam",
             Email = "namlesz@gmail.com",
             Surname = "Wisniewski",
             Username = "Namlesz",
-            Password = "Test1!"
         });
+        
         var userRepo = new UsersRepositories(_connection!);
-        _controller = new UserController(userRepo);
+        _controller = new UserController(userRepo, null);
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class Tests
 
         // Controller result
         var okResult = actionResult as OkObjectResult;
-        var user = okResult?.Value as User;
+        var user = okResult?.Value as NewUser;
         
         //Assert
         Assert.That(user?.Id.ToString(), Is.EqualTo("12345678-1234-1234-1234-123456789123"));
@@ -44,7 +44,6 @@ public class Tests
         Assert.That(user?.Surname, Is.EqualTo("Wisniewski"));
         Assert.That(user?.Email, Is.EqualTo("namlesz@gmail.com"));
         Assert.That(user?.Username, Is.EqualTo("Namlesz"));
-        Assert.That(user?.Password, Is.EqualTo("Test1!"));
     }
     
     [Test]
@@ -61,7 +60,7 @@ public class Tests
     }
     
     [Test]
-    [Description("Found user wrong id format (not guid)")]
+    [Description("Not found user by id")]
     public async Task GetUserWrongId()
     {
         var actionResult = await _controller!.GetUserInfo("12345678-1234-1234-1234-123456782223");
@@ -76,7 +75,7 @@ public class Tests
     [OneTimeTearDown]
     public void TearDown()
     {
-        _connection?.DeleteMany(FilterDefinition<User>.Empty);
+        _connection?.DeleteMany(FilterDefinition<NewUser>.Empty);
         MongoDbCreator.Dispose();
     }
     

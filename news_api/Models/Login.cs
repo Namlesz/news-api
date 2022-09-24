@@ -2,11 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace news_api.Models;
 
-public class Login
-{
+public record Login(
     [Required(ErrorMessage = "E-mail is required")]
-    public string? Email { get; set; }
-
+    string Email,
     [Required(ErrorMessage = "Password is required")]
-    public string? Password { get; set; }
-}
+    string Password
+);

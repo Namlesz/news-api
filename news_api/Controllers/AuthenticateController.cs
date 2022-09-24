@@ -64,7 +64,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromBody] User data)
+    public async Task<IActionResult> Register([FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Problem("User already exists!");
@@ -80,7 +80,7 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> RegisterAdmin([FromBody] User data)
+    public async Task<IActionResult> RegisterAdmin([FromBody] NewUser data)
     {
         if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
@@ -162,7 +162,7 @@ public class AuthenticateController : ControllerBase
         return emailHelper.SendConfirmEmail(user.Email, confirmationLink!);
     }
 
-    private async Task<ApplicationUser?> CreateUser(User data)
+    private async Task<ApplicationUser?> CreateUser(NewUser data)
     {
         ApplicationUser user = new ApplicationUser
         {
