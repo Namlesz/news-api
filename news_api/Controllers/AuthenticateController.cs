@@ -64,15 +64,23 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromBody] NewUser data)
+    public async Task<IActionResult> RegisterEditor([FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
+            return Problem("Email already taken!");
+        
+        if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
 
         var user = await CreateUser(data);
         if (user == null)
             return Problem("User creation failed! Please check user details and try again.");
 
+        if (await _roleManager.RoleExistsAsync(UserRoles.Editor))
+        { 
+            await _userManager.AddToRoleAsync(user, UserRoles.Editor);
+        }
+        
         if (!await SendConfirmationEmail(user))
             return Problem("Confirmation email failed to send.");
 
@@ -82,6 +90,9 @@ public class AuthenticateController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RegisterAdmin([FromBody] NewUser data)
     {
+        if (await _userManager.FindByEmailAsync(data.Email) != null)
+            return Problem("Email already taken!");
+        
         if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
 
@@ -100,7 +111,7 @@ public class AuthenticateController : ControllerBase
         if (!await SendConfirmationEmail(user))
             return Problem("Confirmation email failed to send.");
 
-        return Ok("User created successfully!");
+        return Ok("User created successfully! Pleas confirm your email.");
     }
 
     [HttpPost]
@@ -126,7 +137,8 @@ public class AuthenticateController : ControllerBase
             return NotFound("User not found");
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var passwordResetLink = Url.Action("ChangePassword", "Authenticate", new { token, email }, Request.Scheme);
+        //TODO: Change to production URL
+        var passwordResetLink = Url.Action("ChangePassword", "Authenticate", new { token }, Request.Scheme);
         EmailHelper emailHelper = new EmailHelper();
 
         if (passwordResetLink == null || !emailHelper.SendResetPasswordEmail(email, passwordResetLink))
@@ -154,8 +166,8 @@ public class AuthenticateController : ControllerBase
     private async Task<bool> SendConfirmationEmail(ApplicationUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = token; // TODO: change to url 
-        //Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+        //TODO: Change to production url
+        var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
         EmailHelper emailHelper = new EmailHelper();
 

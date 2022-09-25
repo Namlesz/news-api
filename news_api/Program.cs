@@ -58,7 +58,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.Configure<IdentityOptions>(opts =>
 {
     opts.User.RequireUniqueEmail = true;
-    opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    opts.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     opts.SignIn.RequireConfirmedEmail = true;
 });
 

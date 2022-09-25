@@ -7,10 +7,10 @@ namespace news_api.Repositories;
 
 public class UsersRepositories
 {
-    private readonly IMongoCollection<NewUser> _users;
+    private readonly IMongoCollection<UserInfo> _users;
 
     //To Unit tests
-    public UsersRepositories(IMongoCollection<NewUser> db)
+    public UsersRepositories(IMongoCollection<UserInfo> db)
     {
         _users = db;
     }
@@ -20,16 +20,15 @@ public class UsersRepositories
         IMongoDatabase mongoDatabase)
     {
         var dbSettings = databaseOptions.Value;
-        _users = mongoDatabase.GetCollection<NewUser>(dbSettings.UserCollection);
+        _users = mongoDatabase.GetCollection<UserInfo>(dbSettings.UserCollection);
     }
 
-    public async Task<List<NewUser>> GetAll() =>
+    public async Task<List<UserInfo>> GetAll() =>
         await _users.Find(user => true).ToListAsync();
 
-    public async Task<NewUser?> GetUserByEmail(string email) =>
+    public async Task<UserInfo?> GetUserByEmail(string email) =>
         await _users.Find(user => user.Email == email).FirstOrDefaultAsync();
 
-    public async Task<NewUser?> GetUserById(Guid id) =>
+    public async Task<UserInfo?> GetUserById(Guid id) =>
         await _users.Find(user => user.Id == id).FirstOrDefaultAsync();
-    
 }

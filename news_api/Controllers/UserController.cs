@@ -46,13 +46,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UpdateUser data)
+    [Authorize]
+    public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
     {
-        if (!Guid.TryParse(id, out var guid))
-        {
-            return Problem("Invalid id format");
-        }
-
         var user = await _userManager.FindByIdAsync(id);
         if (user == null)
         {
@@ -65,6 +61,6 @@ public class UserController : ControllerBase
         user.Surname = data.Surname ?? user.Surname;
         
         var result = await _userManager.UpdateAsync(user);
-        return !result.Succeeded ? Problem(result.Errors.First().Description) : Ok(data);
+        return !result.Succeeded ? Problem(result.Errors.First().Description) : Ok("User data updated");
     }
 }

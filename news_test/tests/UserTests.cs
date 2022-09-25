@@ -8,14 +8,14 @@ namespace news_test.tests;
 
 public class Tests
 {
-    private IMongoCollection<NewUser>? _connection;
+    private IMongoCollection<UserInfo>? _connection;
     private UserController? _controller;
 
     [OneTimeSetUp]
     public void Setup()
     {
-        _connection = MongoDbCreator.CreateConnection<NewUser>(nameof(NewUser));
-        _connection?.InsertOne(new NewUser
+        _connection = MongoDbCreator.CreateConnection<UserInfo>(nameof(UserInfo));
+        _connection?.InsertOne(new UserInfo
         {
             Id = Guid.Parse("12345678-1234-1234-1234-123456789123"),
             Name = "Adam",
@@ -36,7 +36,7 @@ public class Tests
 
         // Controller result
         var okResult = actionResult as OkObjectResult;
-        var user = okResult?.Value as NewUser;
+        var user = okResult?.Value as UserInfo;
         
         //Assert
         Assert.That(user?.Id.ToString(), Is.EqualTo("12345678-1234-1234-1234-123456789123"));
@@ -75,7 +75,7 @@ public class Tests
     [OneTimeTearDown]
     public void TearDown()
     {
-        _connection?.DeleteMany(FilterDefinition<NewUser>.Empty);
+        _connection?.DeleteMany(FilterDefinition<UserInfo>.Empty);
         MongoDbCreator.Dispose();
     }
     
