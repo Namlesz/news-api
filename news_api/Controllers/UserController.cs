@@ -21,11 +21,11 @@ public class UserController : ControllerBase
         _usersCollection = usersCollection;
     }
 
+    //TODO: Get all users by Redaction
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetAll() =>
         Ok(await _usersCollection.GetAll());
-
 
     [HttpGet]
     [Authorize]

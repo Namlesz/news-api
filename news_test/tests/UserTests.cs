@@ -24,6 +24,15 @@ public class Tests
             Username = "Namlesz",
         });
         
+        _connection?.InsertOne(new UserInfo
+        {
+            Id = Guid.Parse("12345678-1234-1234-1234-123456789124"),
+            Name = "Jacek",
+            Email = "test@gmail.com",
+            Surname = "Nowak",
+            Username = "BlackBat",
+        });
+        
         var userRepo = new UsersRepositories(_connection!);
         _controller = new UserController(userRepo, null);
     }
@@ -71,7 +80,7 @@ public class Tests
         //Assert
         Assert.That(notFoundResult?.StatusCode, Is.EqualTo(404));
     }
-    
+
     [OneTimeTearDown]
     public void TearDown()
     {
