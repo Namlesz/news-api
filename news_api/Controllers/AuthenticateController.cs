@@ -67,9 +67,6 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> RegisterEditor([FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
-            return Problem("Email already taken!");
-        
-        if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
 
         var user = await CreateUser(data);
@@ -91,11 +88,8 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> RegisterAdmin([FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
-            return Problem("Email already taken!");
-        
-        if (await _userManager.FindByNameAsync(data.Username) != null)
             return Problem("User already exists!");
-
+        
         var user = await CreateUser(data);
         if (user == null)
             return Problem("User creation failed! Please check user details and try again.");
@@ -158,7 +152,7 @@ public class AuthenticateController : ControllerBase
         if (!result.Succeeded)
             return Problem("Email confirmation failed!");
 
-        return Ok("Email confirmed successfully! You can now login.");
+        return Redirect("https://pifront.netlify.app/dashboard/login");
     }
 
     #region Private Methods
@@ -180,9 +174,9 @@ public class AuthenticateController : ControllerBase
         {
             Email = data.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = data.Username,
             Name = data.Name,
             Surname = data.Surname,
+            UserName = data.Email
         };
 
         var result = await _userManager.CreateAsync(user, data.Password);

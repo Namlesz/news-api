@@ -56,7 +56,6 @@ public class UserController : ControllerBase
         }
 
         user.Email = data.Email ?? user.Email;
-        user.UserName = data.Username ?? user.UserName;
         user.Name = data.Name ?? user.Name;
         user.Surname = data.Surname ?? user.Surname;
         

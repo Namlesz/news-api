@@ -21,7 +21,6 @@ public class Tests
             Name = "Adam",
             Email = "namlesz@gmail.com",
             Surname = "Wisniewski",
-            Username = "Namlesz",
         });
         
         _connection?.InsertOne(new UserInfo
@@ -30,7 +29,6 @@ public class Tests
             Name = "Jacek",
             Email = "test@gmail.com",
             Surname = "Nowak",
-            Username = "BlackBat",
         });
         
         var userRepo = new UsersRepositories(_connection!);
@@ -52,7 +50,6 @@ public class Tests
         Assert.That(user?.Name, Is.EqualTo("Adam"));
         Assert.That(user?.Surname, Is.EqualTo("Wisniewski"));
         Assert.That(user?.Email, Is.EqualTo("namlesz@gmail.com"));
-        Assert.That(user?.Username, Is.EqualTo("Namlesz"));
     }
     
     [Test]
