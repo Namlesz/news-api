@@ -31,7 +31,7 @@ public class Tests
             Surname = "Nowak",
         });
         
-        var userRepo = new UsersRepositories(_connection!);
+        var userRepo = new UsersRepository(_connection!);
         _controller = new UserController(userRepo, null);
     }
 

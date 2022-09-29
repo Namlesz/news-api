@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using AspNetCore.Identity.MongoDbCore.Models;
 using MongoDbGenericRepository.Attributes;
 
@@ -8,4 +9,5 @@ public class ApplicationUser : MongoIdentityUser<Guid>
 {
     public string Name { get; set; } = null!;
     public string Surname { get; set; } = null!;
+    public string? EditorialOfficeId { get; set; }
 }

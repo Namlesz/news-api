@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using news_api.Logic;
 using news_api.Models;
 using news_api.Repositories;
 using news_api.Settings;
@@ -11,10 +12,10 @@ namespace news_api.Controllers;
 [Route("[controller]/[action]")]
 public class UserController : ControllerBase
 {
-    private readonly UsersRepositories _usersCollection;
+    private readonly UsersRepository _usersCollection;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserController(UsersRepositories usersCollection, UserManager<ApplicationUser> userManager
+    public UserController(UsersRepository usersCollection, UserManager<ApplicationUser> userManager
     )
     {
         _userManager = userManager;
@@ -49,17 +50,9 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
     {
-        var user = await _userManager.FindByIdAsync(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        user.Email = data.Email ?? user.Email;
-        user.Name = data.Name ?? user.Name;
-        user.Surname = data.Surname ?? user.Surname;
+        var applicationUserLogic = new ApplicationUserLogic(_userManager);
+        var result = await applicationUserLogic.FindAndUpdate(id, data);
         
-        var result = await _userManager.UpdateAsync(user);
         return !result.Succeeded ? Problem(result.Errors.First().Description) : Ok("User data updated");
     }
 }

@@ -62,7 +62,8 @@ builder.Services.Configure<IdentityOptions>(opts =>
 });
 
 // Add repositories to the container.
-builder.Services.AddScoped<UsersRepositories>();
+builder.Services.AddScoped<UsersRepository>();
+builder.Services.AddScoped<EditorialOfficesRepository>();
 
 builder.Services.AddControllers();
 

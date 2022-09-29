@@ -68,7 +68,7 @@ public class AuthenticateController : ControllerBase
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Problem("User already exists!");
-
+        //TODO: Add redaction id to editor (necessary)
         var user = await CreateUser(data);
         if (user == null)
             return Problem("User creation failed! Please check user details and try again.");

@@ -5,17 +5,17 @@ using news_api.Settings;
 
 namespace news_api.Repositories;
 
-public class UsersRepositories
+public class UsersRepository
 {
     private readonly IMongoCollection<UserInfo> _users;
 
     //To Unit tests
-    public UsersRepositories(IMongoCollection<UserInfo> db)
+    public UsersRepository(IMongoCollection<UserInfo> db)
     {
         _users = db;
     }
 
-    public UsersRepositories(
+    public UsersRepository(
         IOptions<NewsDatabaseSettings> databaseOptions,
         IMongoDatabase mongoDatabase)
     {
