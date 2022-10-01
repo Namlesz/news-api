@@ -12,7 +12,8 @@ clone:
  depth: full
 
 pipelines:
-  default:
+  custom:
+    deployment-to-prod:
     - parallel:
         - step:
             name: Build and Test
