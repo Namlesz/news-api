@@ -38,7 +38,7 @@ public class UserController : ControllerBase
         }
 
         var user = await _usersCollection.GetUserById(guid);
-        if (user == null)
+        if (user is null)
         {
             return NotFound();
         }

@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -32,7 +33,7 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> Login([FromBody] Login login)
     {
         var user = await _userManager.FindByEmailAsync(login.Email);
-        if (user == null)
+        if (user is null)
             return NotFound("User not found");
 
         if (!await _userManager.IsEmailConfirmedAsync(user))
@@ -64,13 +65,18 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> RegisterEditor([FromBody] NewUser data)
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> RegisterEditor([FromQuery] string ownerId, [FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Problem("User already exists!");
-        //TODO: Add redaction id to editor (necessary)
-        var user = await CreateUser(data);
-        if (user == null)
+
+        var owner = await _userManager.FindByIdAsync(ownerId);
+        if(owner is null)
+            return NotFound("Owner not found");
+        
+        var user = await CreateUser(data, owner.EditorialOfficeId);
+        if (user is null)
             return Problem("User creation failed! Please check user details and try again.");
 
         if (await _roleManager.RoleExistsAsync(UserRoles.Editor))
@@ -91,7 +97,7 @@ public class AuthenticateController : ControllerBase
             return Problem("User already exists!");
         
         var user = await CreateUser(data);
-        if (user == null)
+        if (user is null)
             return Problem("User creation failed! Please check user details and try again.");
 
         foreach (var role in Enum.GetNames(typeof(Roles)))
@@ -127,7 +133,7 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> ResetPassword([FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
+        if (user is null)
             return NotFound("User not found");
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -145,7 +151,7 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
+        if (user is null)
             return NotFound("User not found");
 
         var result = await _userManager.ConfirmEmailAsync(user, token);
@@ -168,7 +174,7 @@ public class AuthenticateController : ControllerBase
         return emailHelper.SendConfirmEmail(user.Email, confirmationLink!);
     }
 
-    private async Task<ApplicationUser?> CreateUser(NewUser data)
+    private async Task<ApplicationUser?> CreateUser(NewUser data, string? editorialOfficeId = null)
     {
         ApplicationUser user = new ApplicationUser
         {
@@ -176,7 +182,8 @@ public class AuthenticateController : ControllerBase
             SecurityStamp = Guid.NewGuid().ToString(),
             Name = data.Name,
             Surname = data.Surname,
-            UserName = data.Email
+            UserName = data.Email,
+            EditorialOfficeId = editorialOfficeId
         };
 
         var result = await _userManager.CreateAsync(user, data.Password);

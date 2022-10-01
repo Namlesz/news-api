@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using AspNetCore.Identity.MongoDbCore.Models;
 using MongoDbGenericRepository.Attributes;
 

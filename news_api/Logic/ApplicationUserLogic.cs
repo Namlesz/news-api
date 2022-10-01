@@ -17,7 +17,7 @@ public class ApplicationUserLogic
     public async Task<IdentityResult> FindAndUpdate(string id, UserInfo data)
     {
         var user = await _userManager.FindByIdAsync(id);
-        if (user == null)
+        if (user is null)
         {
             return IdentityResult.Failed(new IdentityError
             {
