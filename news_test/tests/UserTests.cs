@@ -32,7 +32,7 @@ public class Tests
         });
         
         var userRepo = new UsersRepository(_connection!);
-        _controller = new UserController(userRepo, null);
+        _controller = new UserController(userRepo, null!);
     }
 
     [Test]

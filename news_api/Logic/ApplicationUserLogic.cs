@@ -8,8 +8,7 @@ public class ApplicationUserLogic
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public ApplicationUserLogic(UserManager<ApplicationUser> userManager
-    )
+    public ApplicationUserLogic(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
@@ -30,7 +29,12 @@ public class ApplicationUserLogic
         user.Name = data.Name ?? user.Name;
         user.Surname = data.Surname ?? user.Surname;
         user.EditorialOfficeId = data.EditorialOfficeId ?? user.EditorialOfficeId;
-        
-       return await _userManager.UpdateAsync(user);
+
+        return await _userManager.UpdateAsync(user);
+    }
+
+    public UserManager<ApplicationUser> GetManager()
+    {
+        return _userManager;
     }
 }

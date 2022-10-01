@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using news_api.Helpers;
+using news_api.Logic;
 using news_api.Repositories;
 using news_api.Settings;
 
@@ -64,6 +65,7 @@ builder.Services.Configure<IdentityOptions>(opts =>
 // Add repositories to the container.
 builder.Services.AddScoped<UsersRepository>();
 builder.Services.AddScoped<EditorialOfficesRepository>();
+builder.Services.AddScoped<ApplicationUserLogic>();
 
 builder.Services.AddControllers();
 
