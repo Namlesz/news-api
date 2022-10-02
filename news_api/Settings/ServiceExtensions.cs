@@ -91,12 +91,13 @@ public static class ServiceExtensions
     {
         services.AddCors(options =>
         {
-            options.AddPolicy(name: "AllowHerokuOrigin",
+            options.AddPolicy(name: "AllowAllOrigins",
                 policy =>
                 {
                     policy.AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowCredentials()
+                        .AllowAnyMethod();
                 });
         });
     }
