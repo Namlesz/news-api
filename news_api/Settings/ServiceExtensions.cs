@@ -75,7 +75,7 @@ public static class ServiceExtensions
         services.AddScoped<UsersRepository>();
         services.AddScoped<EditorialOfficesRepository>();
     }
-    
+
     public static void AddLogic(this IServiceCollection services)
     {
         services.AddScoped<ApplicationUserLogic>();
@@ -85,5 +85,19 @@ public static class ServiceExtensions
     public static void InitializeRoles(this IServiceProvider service)
     {
         DataInitializer.SeedRoles(service).Wait();
+    }
+
+    public static void ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy(name: "AllowHerokuOrigin",
+                policy =>
+                {
+                    policy.WithOrigins("https://news-inz-api.herokuapp.com")
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+        });
     }
 }

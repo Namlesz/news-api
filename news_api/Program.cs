@@ -12,6 +12,7 @@ builder.Services.AddLogic();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureCors();
 
 var app = builder.Build();
 
@@ -22,6 +23,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowHerokuOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
