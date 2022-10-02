@@ -94,7 +94,7 @@ public static class ServiceExtensions
             options.AddPolicy(name: "AllowHerokuOrigin",
                 policy =>
                 {
-                    policy.WithOrigins("https://news-inz-api.herokuapp.com")
+                    policy.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowCredentials();
                 });
