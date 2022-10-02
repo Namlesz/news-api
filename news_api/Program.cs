@@ -18,11 +18,11 @@ var app = builder.Build();
 
 app.Services.InitializeRoles();
 
-// if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 
 app.UseCors("AllowAllOrigins");
 
