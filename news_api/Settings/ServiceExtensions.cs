@@ -96,7 +96,6 @@ public static class ServiceExtensions
                 {
                     policy.AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowCredentials()
                         .AllowAnyMethod();
                 });
         });
