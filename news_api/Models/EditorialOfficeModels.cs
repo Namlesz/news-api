@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
 
@@ -12,7 +11,6 @@ public class EditorialOffice
     public string? Town { get; set; }
     public string? OwnerInfo { get; set; }
     public string? OwnerId { get; set; }
-    //public Image? Logo { get; set; }
 
     public bool IsValid()
     {

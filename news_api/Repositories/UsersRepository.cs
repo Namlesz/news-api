@@ -26,9 +26,9 @@ public class UsersRepository
     public async Task<List<UserInfo>> GetAll() =>
         await _users.Find(user => true).ToListAsync();
 
-    public async Task<UserInfo?> GetUserByEmail(string email) =>
-        await _users.Find(user => user.Email == email).FirstOrDefaultAsync();
-
     public async Task<UserInfo?> GetUserById(Guid id) =>
         await _users.Find(user => user.Id == id).FirstOrDefaultAsync();
+
+    public async Task<List<UserInfo>> GetAllOfficeUsers(string userEditorialOfficeId) =>
+        await _users.Find(user => user.EditorialOfficeId == userEditorialOfficeId).ToListAsync();
 }

@@ -37,4 +37,15 @@ public class ApplicationUserLogic
     {
         return _userManager;
     }
+    
+    public async Task<bool> HasEditorialOffice(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return false;
+        }
+
+        return user.EditorialOfficeId is not null;
+    }
 }

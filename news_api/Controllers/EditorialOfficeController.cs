@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using news_api.Logic;
 using news_api.Models;
-using news_api.Repositories;
 using news_api.Settings;
 
 namespace news_api.Controllers;
@@ -11,15 +10,11 @@ namespace news_api.Controllers;
 [Route("[controller]/[action]")]
 public class EditorialOfficeController : ControllerBase
 {
-    private readonly EditorialOfficesRepository _editorialOfficesRepository;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly EditorialOfficesLogic _editorialOfficesLogic;
 
-    public EditorialOfficeController(EditorialOfficesRepository editorialOfficesCollection,
-        UserManager<ApplicationUser> userManager
-    )
+    public EditorialOfficeController(EditorialOfficesLogic editorialOfficesLogic)
     {
-        _userManager = userManager;
-        _editorialOfficesRepository = editorialOfficesCollection;
+        _editorialOfficesLogic = editorialOfficesLogic;
     }
 
     [HttpPost]
@@ -31,22 +26,29 @@ public class EditorialOfficeController : ControllerBase
             return BadRequest("All fields must be filled");
         }
 
-        if (await _editorialOfficesRepository.GetByName(office.Name!) != null)
+        if (await _editorialOfficesLogic.GetByName(office.Name!) is not null)
         {
             return BadRequest("Editorial office already exists");
         }
 
-        if (!await _editorialOfficesRepository.Create(office))
+        var result = await _editorialOfficesLogic.Create(office);
+        if (!result.Success)
         {
-            return Problem("Something went wrong");
+            return Problem(result.Message);
         }
 
-        return Ok(office);
+        return Created(nameof(Create), office);
     }
 
     [HttpGet]
     [Authorize]
     [Route("{editorialOfficeName}")]
-    public async Task<IActionResult> GetByName([FromRoute] string editorialOfficeName) =>
-        Ok(await _editorialOfficesRepository.GetByName(editorialOfficeName));
+    public async Task<IActionResult> GetByName([FromRoute] string editorialOfficeName)
+    {
+        var editorialOffice = await _editorialOfficesLogic.GetByName(editorialOfficeName);
+        if (editorialOffice is null)
+            return NotFound();
+
+        return Ok(editorialOffice);
+    }
 }

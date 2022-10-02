@@ -20,11 +20,22 @@ public class UserController : ControllerBase
         _usersCollection = usersCollection;
     }
 
-    //TODO: Get all users by Redaction
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> GetAll() =>
-        Ok(await _usersCollection.GetAll());
+    public async Task<IActionResult> GetAllOfficeUsers([FromQuery] string userId)
+    {
+        var user = await _applicationUserLogic.GetManager().FindByIdAsync(userId);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        if (user.EditorialOfficeId is null)
+        {
+            return BadRequest("User is not assigned to any editorial office");
+        }
+        
+        return Ok(await _usersCollection.GetAllOfficeUsers(user.EditorialOfficeId));
+    }
 
     [HttpGet]
     [Authorize]

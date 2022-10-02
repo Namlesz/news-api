@@ -71,11 +71,23 @@ public class AuthenticateController : ControllerBase
         if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Problem("User already exists!");
 
-        var owner = await _userManager.FindByIdAsync(ownerId);
-        if(owner is null)
-            return NotFound("Owner not found");
-        
-        var user = await CreateUser(data, owner.EditorialOfficeId);
+        string editorialOfficeId;
+        try
+        {
+            var owner = await _userManager.FindByIdAsync(ownerId);
+            if (owner is null)
+                return NotFound("Owner not found");
+            if (owner.EditorialOfficeId is null)
+                return NotFound("Owner has no editorial office");
+            
+            editorialOfficeId = owner.EditorialOfficeId;
+        }
+        catch
+        {
+            return Problem("Invalid owner id");
+        }
+
+        var user = await CreateUser(data, editorialOfficeId);
         if (user is null)
             return Problem("User creation failed! Please check user details and try again.");
 
