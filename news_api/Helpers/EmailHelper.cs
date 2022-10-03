@@ -1,4 +1,6 @@
 using System.Net.Mail;
+using news_api.Templates;
+using Razor.Templating.Core;
 
 namespace news_api.Helpers;
 
@@ -25,7 +27,11 @@ public class EmailHelper
     {
         _mailMessage.To.Add(new MailAddress(userEmail));
         _mailMessage.Subject = "Confirm your email";
-        _mailMessage.Body = confirmationLink;
+        _mailMessage.IsBodyHtml = true;
+
+        var htmlBody = RazorTemplateEngine.RenderAsync("~/Templates/ConfirmationEmailTemplate.cshtml",
+            new ConfirmationEmailTemplate { ConfirmationLink = confirmationLink }).Result;
+        _mailMessage.Body = htmlBody;
 
         try
         {
