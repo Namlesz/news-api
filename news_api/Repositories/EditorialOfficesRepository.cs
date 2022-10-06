@@ -10,7 +10,9 @@ public class EditorialOfficesRepository
     private readonly IMongoCollection<EditorialOffice> _editorialOffices;
 
 
-    //To Unit tests
+    /// <summary>
+    /// Unit test constructor
+    /// </summary>
     public EditorialOfficesRepository(IMongoCollection<EditorialOffice> db)
     {
         _editorialOffices = db;

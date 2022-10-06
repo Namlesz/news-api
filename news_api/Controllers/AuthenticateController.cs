@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ public class AuthenticateController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] Login login)
     {
+        //TODO: Delete messages from NotFound
         var user = await _userManager.FindByEmailAsync(login.Email);
         if (user is null)
             return NotFound("User not found");
@@ -40,7 +42,7 @@ public class AuthenticateController : ControllerBase
             return Unauthorized("Email not confirmed");
 
         if (!await _userManager.CheckPasswordAsync(user, login.Password))
-            return Unauthorized("Invalid password");
+            return NotFound("Invalid password");
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -69,7 +71,7 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> RegisterEditor([FromQuery] string ownerId, [FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
-            return Problem("User already exists!");
+            return Conflict("User already exists!");
 
         string editorialOfficeId;
         try
@@ -106,7 +108,7 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> RegisterAdmin([FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
-            return Problem("User already exists!");
+            return Conflict("User already exists!");
         
         var user = await CreateUser(data);
         if (user is null)
@@ -148,12 +150,11 @@ public class AuthenticateController : ControllerBase
         if (user is null)
             return NotFound("User not found");
 
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        //TODO: Change to production URL
-        var passwordResetLink = Url.Action("ChangePassword", "Authenticate", new { token }, Request.Scheme);
+        var token = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
+        var passwordResetLink = $"https://pifront.netlify.app/dashboard/change/{token}";
         EmailHelper emailHelper = new EmailHelper();
 
-        if (passwordResetLink == null || !emailHelper.SendResetPasswordEmail(email, passwordResetLink))
+        if (token is null || !emailHelper.SendResetPasswordEmail(email, passwordResetLink))
             return Problem("Unable to send password reset email");
 
         return Ok("Password reset link sent to email");
@@ -170,7 +171,7 @@ public class AuthenticateController : ControllerBase
         if (!result.Succeeded)
             return Problem("Email confirmation failed!");
 
-        return Redirect("https://pifront.netlify.app/dashboard/login");
+        return Redirect("https://pifront.netlify.app/dashboard/activated");
     }
 
     #region Private Methods

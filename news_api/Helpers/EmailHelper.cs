@@ -57,8 +57,12 @@ public class EmailHelper
     {
         _mailMessage.To.Add(new MailAddress(userEmail));
         _mailMessage.Subject = "Change your password";
-        _mailMessage.Body = passwordResetLink;
+        _mailMessage.IsBodyHtml = true;
 
+        var htmlBody = RazorTemplateEngine.RenderAsync("~/Templates/ResetPasswordTemplate.cshtml",
+            new ResetPasswordTemplate() { ResetLink = passwordResetLink }).Result;
+        _mailMessage.Body = htmlBody;
+        
         try
         {
             _smtpClient.Send(_mailMessage);
