@@ -129,14 +129,13 @@ public class AuthenticateController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangePassword([FromQuery] string email, [FromQuery] string token,
-        [FromQuery] string password)
+    public async Task<IActionResult> ChangePassword([FromBody] PasswordChange data)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(data.Email);
         if (user == null)
             return NotFound("User not found");
 
-        var result = await _userManager.ResetPasswordAsync(user, token, password);
+        var result = await _userManager.ResetPasswordAsync(user, data.Token, data.Password);
         if (!result.Succeeded)
             return Problem("Password change failed");
 
