@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using news_api.Logic;
+using news_api.Interfaces.Logic;
+using news_api.Interfaces.Repositories;
 using news_api.Models;
-using news_api.Repositories;
 using news_api.Settings;
 
 namespace news_api.Controllers;
@@ -11,10 +11,10 @@ namespace news_api.Controllers;
 [Route("[controller]/[action]")]
 public class UserController : ControllerBase
 {
-    private readonly UsersRepository _usersCollection;
-    private readonly ApplicationUserLogic _applicationUserLogic;
+    private readonly IUsersRepository _usersCollection;
+    private readonly IApplicationUserLogic _applicationUserLogic;
 
-    public UserController(UsersRepository usersCollection, ApplicationUserLogic applicationUserLogic)
+    public UserController(IUsersRepository usersCollection, IApplicationUserLogic applicationUserLogic)
     {
         _applicationUserLogic = applicationUserLogic;
         _usersCollection = usersCollection;

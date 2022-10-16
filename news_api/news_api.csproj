@@ -16,8 +16,4 @@
         <PackageReference Include="Razor.Templating.Core" Version="1.7.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Interfaces" />
-    </ItemGroup>
 </Project>

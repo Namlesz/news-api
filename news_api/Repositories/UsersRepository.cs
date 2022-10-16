@@ -1,11 +1,12 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using news_api.Interfaces.Repositories;
 using news_api.Models;
 using news_api.Settings;
 
 namespace news_api.Repositories;
 
-public class UsersRepository
+public class UsersRepository : IUsersRepository
 {
     private readonly IMongoCollection<UserInfo> _users;
 
@@ -22,9 +23,6 @@ public class UsersRepository
         var dbSettings = databaseOptions.Value;
         _users = mongoDatabase.GetCollection<UserInfo>(dbSettings.UserCollection);
     }
-
-    public async Task<List<UserInfo>> GetAll() =>
-        await _users.Find(user => true).ToListAsync();
 
     public async Task<UserInfo?> GetUserById(Guid id) =>
         await _users.Find(user => user.Id == id).FirstOrDefaultAsync();

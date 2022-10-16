@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using news_api.Logic;
+using news_api.Interfaces.Logic;
 using news_api.Models;
 using news_api.Settings;
 
@@ -10,9 +10,9 @@ namespace news_api.Controllers;
 [Route("[controller]/[action]")]
 public class EditorialOfficeController : ControllerBase
 {
-    private readonly EditorialOfficesLogic _editorialOfficesLogic;
+    private readonly IEditorialOfficesLogic _editorialOfficesLogic;
 
-    public EditorialOfficeController(EditorialOfficesLogic editorialOfficesLogic)
+    public EditorialOfficeController(IEditorialOfficesLogic editorialOfficesLogic)
     {
         _editorialOfficesLogic = editorialOfficesLogic;
     }

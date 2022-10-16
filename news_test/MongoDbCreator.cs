@@ -6,19 +6,18 @@ namespace news_test;
 public static class MongoDbCreator
 {
     private static MongoDbRunner? _runner;
-
-    public static IMongoCollection<T> CreateConnection<T>(string collectionName)
+    private static MongoClient? _client;
+    
+    public static IMongoDatabase CreateDb()
     {
         _runner = MongoDbRunner.Start();
-        
-        var client = new MongoClient(_runner.ConnectionString);
-        var database = client.GetDatabase("test");
-        
-        return database.GetCollection<T>(collectionName);
+        _client = new MongoClient(_runner.ConnectionString);
+        return _client.GetDatabase("test");
     }
     
     public static void Dispose()
     {
+        _client?.DropDatabase("test");
         _runner?.Dispose();
     }
 }

@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using news_api.Interfaces.Logic;
 using news_api.Models;
 using news_api.Settings;
 
 namespace news_api.Logic;
 
-public class ApplicationUserLogic
+public class ApplicationUserLogic : IApplicationUserLogic
 {
     private readonly UserManager<ApplicationUser> _userManager;
 

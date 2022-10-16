@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using news_api.Helpers;
+using news_api.Interfaces.Logic;
+using news_api.Interfaces.Repositories;
 using news_api.Logic;
 using news_api.Repositories;
 
@@ -72,14 +74,14 @@ public static class ServiceExtensions
 
     public static void AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<UsersRepository>();
-        services.AddScoped<EditorialOfficesRepository>();
+        services.AddSingleton<IUsersRepository, UsersRepository>();
+        services.AddSingleton<IEditorialOfficesRepository, EditorialOfficesRepository>();
     }
 
     public static void AddLogic(this IServiceCollection services)
     {
-        services.AddScoped<ApplicationUserLogic>();
-        services.AddScoped<EditorialOfficesLogic>();
+        services.AddScoped<IApplicationUserLogic, ApplicationUserLogic>();
+        services.AddScoped<IEditorialOfficesLogic, EditorialOfficesLogic>();
     }
 
     public static void InitializeRoles(this IServiceProvider service)

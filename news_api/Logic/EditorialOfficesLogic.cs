@@ -1,15 +1,16 @@
+using news_api.Interfaces.Logic;
+using news_api.Interfaces.Repositories;
 using news_api.Models;
-using news_api.Repositories;
 
 namespace news_api.Logic;
 
-public class EditorialOfficesLogic
+public class EditorialOfficesLogic : IEditorialOfficesLogic
 {
-    private readonly EditorialOfficesRepository _editorialOffices;
-    private readonly ApplicationUserLogic _applicationUserLogic;
+    private readonly IEditorialOfficesRepository _editorialOffices;
+    private readonly IApplicationUserLogic _applicationUserLogic;
 
-    public EditorialOfficesLogic(EditorialOfficesRepository editorialOfficesCollection,
-        ApplicationUserLogic applicationUserLogic)
+    public EditorialOfficesLogic(IEditorialOfficesRepository editorialOfficesCollection,
+        IApplicationUserLogic applicationUserLogic)
     {
         _editorialOffices = editorialOfficesCollection;
         _applicationUserLogic = applicationUserLogic;

@@ -33,23 +33,22 @@ public class AuthenticateController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] Login login)
     {
-        //TODO: Delete messages from NotFound
         var user = await _userManager.FindByEmailAsync(login.Email);
         if (user is null)
-            return NotFound("User not found");
+            return NotFound();
 
         if (!await _userManager.IsEmailConfirmedAsync(user))
             return Unauthorized("Email not confirmed");
 
         if (!await _userManager.CheckPasswordAsync(user, login.Password))
-            return NotFound("Invalid password");
+            return NotFound();
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Name, user.UserName),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
         foreach (var userRole in userRoles)
@@ -153,7 +152,7 @@ public class AuthenticateController : ControllerBase
         var passwordResetLink = $"https://pifront.netlify.app/dashboard/change/{token}";
         EmailHelper emailHelper = new EmailHelper();
 
-        if (token is null || !emailHelper.SendResetPasswordEmail(email, passwordResetLink))
+        if (!emailHelper.SendResetPasswordEmail(email, passwordResetLink))
             return Problem("Unable to send password reset email");
 
         return Ok("Password reset link sent to email");
@@ -178,7 +177,6 @@ public class AuthenticateController : ControllerBase
     private async Task<bool> SendConfirmationEmail(ApplicationUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        //TODO: Change to production url
         var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
         EmailHelper emailHelper = new EmailHelper();
@@ -209,7 +207,7 @@ public class AuthenticateController : ControllerBase
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.Now.AddDays(1),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
