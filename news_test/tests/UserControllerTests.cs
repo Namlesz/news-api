@@ -14,23 +14,35 @@ public class Tests
 {
     private IMongoDatabase? _database;
     private UserController? _controller;
-
+    
+    private const string IdRedactor = "12345678-1234-1234-1234-123456789123";
+    private const string IdEditor = "12345678-1234-1234-1234-123456789124";
+    private const string EditorialOfficeId = "87654321-1234-1234-1234-123456789123";
+    
     [OneTimeSetUp]
     public void Setup()
     {
-        var id = "12345678-1234-1234-1234-123456789123";
-        var exampleUser = new UserInfo()
+        var exampleRedactor = new UserInfo()
         {
             Name = "Adam",
-            Email = "test@email.com",
+            Email = "adam.kowalski@gmail.com",
             Surname = "Kowalski",
-            Id = Guid.Parse(id),
-            EditorialOfficeId = "87654321-1234-1234-1234-123456789123"
+            Id = Guid.Parse(IdRedactor),
+            EditorialOfficeId = EditorialOfficeId
+        };
+        var exampleEditor = new UserInfo()
+        {
+            Name = "Jan",
+            Email = "jan.wojciechowski@gmail.com",
+            Surname = "Wojciechowski",
+            Id = Guid.Parse(IdEditor),
+            EditorialOfficeId = EditorialOfficeId
         };
 
         _database = MongoDbCreator.CreateDb();
         var collection = _database.GetCollection<UserInfo>("Users");
-        collection.InsertOne(exampleUser);
+        collection.InsertOne(exampleRedactor);
+        collection.InsertOne(exampleEditor);
 
         var mockUserManager = new Mock<UserManager<ApplicationUser>>(new Mock<IUserStore<ApplicationUser>>().Object,
             null, null, null, null, null, null, null, null);
@@ -39,14 +51,13 @@ public class Tests
                 manager => manager.FindByIdAsync(It.IsAny<string>()))
             .Returns<string>(x =>
             {
-                if (x.Contains(id))
+                if (x.Contains(IdRedactor))
                 {
                     return Task.FromResult(new ApplicationUser
                     {
-                        EditorialOfficeId = "87654321-1234-1234-1234-123456789123"
+                        EditorialOfficeId = EditorialOfficeId
                     });
                 }
-
                 return Task.FromResult(new ApplicationUser());
             });
        
@@ -56,28 +67,28 @@ public class Tests
             .ReturnsAsync(IdentityResult.Success);
 
         var userLogic = new ApplicationUserLogic(mockUserManager.Object);
-        var userRepo = new UsersRepository(collection!);
+        var userRepo = new UsersRepository(collection);
 
         _controller = new UserController(userRepo, userLogic);
     }
 
     [Test]
-    [Description("Found a user by id")]
+    [Description("GetUserInfo() -> Found user")]
     public async Task GetUserInfo()
     {
-        var actionResult = await _controller!.GetUserInfo("12345678-1234-1234-1234-123456789123");
+        var actionResult = await _controller!.GetUserInfo(IdRedactor);
         var okResult = actionResult as OkObjectResult;
 
         var user = okResult?.Value as UserInfo;
 
-        Assert.That(user?.Id.ToString(), Is.EqualTo("12345678-1234-1234-1234-123456789123"));
+        Assert.That(user?.Id.ToString(), Is.EqualTo(IdRedactor));
         Assert.That(user?.Name, Is.EqualTo("Adam"));
         Assert.That(user?.Surname, Is.EqualTo("Kowalski"));
-        Assert.That(user?.Email, Is.EqualTo("test@email.com"));
+        Assert.That(user?.Email, Is.EqualTo("adam.kowalski@gmail.com"));
     }
 
     [Test]
-    [Description("Found user wrong id format (not guid)")]
+    [Description("GetUserInfo() -> Wrong id format")]
     public async Task GetUserInvalidIdFormat()
     {
         var actionResult = await _controller!.GetUserInfo("123412");
@@ -87,7 +98,7 @@ public class Tests
     }
 
     [Test]
-    [Description("Not found user by id")]
+    [Description("GetUserInfo() -> Not found user")]
     public async Task GetUserWrongId()
     {
         var actionResult = await _controller!.GetUserInfo("12345678-1234-1234-1234-123456782223");
@@ -97,32 +108,33 @@ public class Tests
     }
 
     [Test]
-    [Description("Update user information")]
+    [Description("UpdateUserInfo() -> Updated")]
     public async Task UpdateUserInfo()
     {
         var data = new UserInfo() { Name = "Kowal", Email = "kowal@me.pl" };
         
-        var actionResult = await _controller!.UpdateUserInfo("12345678-1234-1234-1234-123456789123", data);
+        var actionResult = await _controller!.UpdateUserInfo(IdRedactor, data);
         var okResult = actionResult as OkObjectResult;
 
         Assert.That(okResult?.Value?.ToString(), Is.EqualTo("User data updated"));
     }
 
     [Test]
-    [Description("Get all users from Editorial Office")]
+    [Description("GetAllEditorialOfficeUsers() -> Found all users")]
     public async Task GetAllEditorialOfficeUsers()
     {
-        var actionResult = await _controller!.GetAllOfficeUsers("12345678-1234-1234-1234-123456789123");
+        var actionResult = await _controller!.GetAllOfficeUsers(IdRedactor);
         var okResult = actionResult as OkObjectResult;
 
         var users = okResult?.Value as List<UserInfo>;
 
-        Assert.That(users!.Count, Is.EqualTo(1));
-        Assert.That(users![0].Id, Is.EqualTo(Guid.Parse("12345678-1234-1234-1234-123456789123")));
+        Assert.That(users!.Count, Is.EqualTo(2));
+        Assert.That(users[0].Id, Is.EqualTo(Guid.Parse(IdRedactor)));
+        Assert.That(users[1].Id, Is.EqualTo(Guid.Parse(IdEditor)));
     }
 
     [Test]
-    [Description("Not found editorial office")]
+    [Description("GetAllEditorialOfficeUsers() -> User don't have editorial office")]
     public async Task NotFoundEditorialOffice()
     {
         var actionResult = await _controller!.GetAllOfficeUsers("12345678-4321-1234-1234-123456789123");
@@ -130,7 +142,7 @@ public class Tests
 
         Assert.That(badRequest!.Value, Is.EqualTo("User is not assigned to any editorial office"));
     }
-
+    
     [OneTimeTearDown]
     public void TearDown()
     {
