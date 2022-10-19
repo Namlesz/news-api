@@ -59,4 +59,9 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return new BaseResult() { Success = false, Message = ex.Message };
         }
     }
+    
+    public async Task<bool> IsExists(string editorialOfficeName)
+    {
+        return await _editorialOffices.GetByName(editorialOfficeName) != null;
+    }
 }

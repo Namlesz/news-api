@@ -6,4 +6,6 @@ public interface IEditorialOfficesLogic
 {
     public Task<EditorialOffice?> GetByName(string editorialOfficeName);
     public Task<BaseResult> Create(EditorialOffice office);
+    public Task<bool> IsExists(string editorialOfficeName);
+
 }

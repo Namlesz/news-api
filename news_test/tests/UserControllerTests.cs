@@ -12,8 +12,8 @@ namespace news_test.tests;
 
 public class Tests
 {
-    private IMongoDatabase? _database;
-    private UserController? _controller;
+    private IMongoDatabase _database = null!;
+    private UserController _controller = null!;
     
     private const string IdRedactor = "12345678-1234-1234-1234-123456789123";
     private const string IdEditor = "12345678-1234-1234-1234-123456789124";
@@ -76,7 +76,7 @@ public class Tests
     [Description("GetUserInfo() -> Found user")]
     public async Task GetUserInfo()
     {
-        var actionResult = await _controller!.GetUserInfo(IdRedactor);
+        var actionResult = await _controller.GetUserInfo(IdRedactor);
         var okResult = actionResult as OkObjectResult;
 
         var user = okResult?.Value as UserInfo;
@@ -91,7 +91,7 @@ public class Tests
     [Description("GetUserInfo() -> Wrong id format")]
     public async Task GetUserInvalidIdFormat()
     {
-        var actionResult = await _controller!.GetUserInfo("123412");
+        var actionResult = await _controller.GetUserInfo("123412");
         var problemResult = actionResult as ObjectResult;
 
         Assert.That(problemResult?.StatusCode, Is.EqualTo(500));
@@ -101,7 +101,7 @@ public class Tests
     [Description("GetUserInfo() -> Not found user")]
     public async Task GetUserWrongId()
     {
-        var actionResult = await _controller!.GetUserInfo("12345678-1234-1234-1234-123456782223");
+        var actionResult = await _controller.GetUserInfo("12345678-1234-1234-1234-123456782223");
         var notFoundResult = actionResult as NotFoundResult;
 
         Assert.That(notFoundResult?.StatusCode, Is.EqualTo(404));
@@ -113,7 +113,7 @@ public class Tests
     {
         var data = new UserInfo() { Name = "Kowal", Email = "kowal@me.pl" };
         
-        var actionResult = await _controller!.UpdateUserInfo(IdRedactor, data);
+        var actionResult = await _controller.UpdateUserInfo(IdRedactor, data);
         var okResult = actionResult as OkObjectResult;
 
         Assert.That(okResult?.Value?.ToString(), Is.EqualTo("User data updated"));
@@ -123,7 +123,7 @@ public class Tests
     [Description("GetAllEditorialOfficeUsers() -> Found all users")]
     public async Task GetAllEditorialOfficeUsers()
     {
-        var actionResult = await _controller!.GetAllOfficeUsers(IdRedactor);
+        var actionResult = await _controller.GetAllOfficeUsers(IdRedactor);
         var okResult = actionResult as OkObjectResult;
 
         var users = okResult?.Value as List<UserInfo>;
@@ -137,7 +137,7 @@ public class Tests
     [Description("GetAllEditorialOfficeUsers() -> User don't have editorial office")]
     public async Task NotFoundEditorialOffice()
     {
-        var actionResult = await _controller!.GetAllOfficeUsers("12345678-4321-1234-1234-123456789123");
+        var actionResult = await _controller.GetAllOfficeUsers("12345678-4321-1234-1234-123456789123");
         var badRequest = actionResult as BadRequestObjectResult;
 
         Assert.That(badRequest!.Value, Is.EqualTo("User is not assigned to any editorial office"));

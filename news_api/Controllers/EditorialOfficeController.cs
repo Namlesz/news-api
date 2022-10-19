@@ -26,7 +26,7 @@ public class EditorialOfficeController : ControllerBase
             return BadRequest("All fields must be filled");
         }
 
-        if (await _editorialOfficesLogic.GetByName(office.Name!) is not null)
+        if (await _editorialOfficesLogic.IsExists(office.Name!))
         {
             return BadRequest("Editorial office already exists");
         }
