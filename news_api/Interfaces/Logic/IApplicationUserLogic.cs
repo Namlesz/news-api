@@ -9,5 +9,7 @@ public interface IApplicationUserLogic
     public Task<IdentityResult> FindAndUpdate(string id, UserInfo data);
     public UserManager<ApplicationUser> GetManager();
     public Task<bool> HasEditorialOffice(string id);
+    public Task<IdentityResult> DeleteEditorialOffice(string id);
+
 
 }

@@ -29,6 +29,9 @@ public class EditorialOfficesRepository : IEditorialOfficesRepository
     public async Task<EditorialOffice?> GetByName(string editorialOfficeName)
         => await _editorialOffices.Find(e => e.Name == editorialOfficeName).FirstOrDefaultAsync();
 
+    public async Task<EditorialOffice?> GetById(Guid id)
+        => await _editorialOffices.Find(e => e.Id == id).FirstOrDefaultAsync();
+    
     public async void Create(EditorialOffice office)
     {
         await _editorialOffices.InsertOneAsync(office);

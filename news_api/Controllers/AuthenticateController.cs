@@ -61,7 +61,8 @@ public class AuthenticateController : ControllerBase
         {
             userId = user.Id,
             token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo
+            expiration = token.ValidTo,
+            editorialOfficeId = user.EditorialOfficeId
         });
     }
 

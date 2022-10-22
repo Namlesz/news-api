@@ -24,17 +24,32 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        var owner = await _applicationUserLogic.GetManager().FindByIdAsync(result.OwnerId);
-        result.OwnerInfo = $"{owner.Name} {owner.Surname}";
-
+        result.OwnerInfo = await GetOwnerInfo(result.OwnerId!);
         return result;
     }
-    
+
+    public async Task<EditorialOffice?> GetById(string id)
+    {
+        if (!Guid.TryParse(id, out var guid))
+        {
+            return null;
+        }
+
+        var result = await _editorialOffices.GetById(guid);
+        if (result is null)
+        {
+            return null;
+        }
+
+        result.OwnerInfo = await GetOwnerInfo(result.OwnerId!);
+        return result;
+    }
+
     public async Task<BaseResult> Create(EditorialOffice office)
     {
         try
         {
-            if (await _applicationUserLogic.HasEditorialOffice(office.OwnerId ?? throw new InvalidOperationException()))
+            if (await HasEditorialOffice(office.OwnerId!))
             {
                 return new BaseResult() { Success = false, Message = "User already has an editorial office" };
             }
@@ -59,9 +74,42 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return new BaseResult() { Success = false, Message = ex.Message };
         }
     }
-    
-    public async Task<bool> IsExists(string editorialOfficeName)
+
+    public async Task<BaseResult> Delete(string userId, string officeId)
     {
-        return await _editorialOffices.GetByName(editorialOfficeName) != null;
+        var userUpdated = await _applicationUserLogic.DeleteEditorialOffice(userId);
+
+        if (!userUpdated.Succeeded)
+        {
+            return new BaseResult() {Success = false, Message = "Error while updating user info"};
+        }
+        
+        if (!Guid.TryParse(officeId, out var guid))
+        {
+            return new BaseResult() { Success = false, Message = "Invalid id" };
+        }
+
+        try
+        {
+            _editorialOffices.DeleteById(guid);
+        }
+        catch (Exception)
+        {
+            return new BaseResult() { Success = false, Message = "Something went wrong" };
+        }
+        
+        return new BaseResult() { Success = true };
+    }
+    
+    public async Task<bool> IsExists(string editorialOfficeName) =>
+        await _editorialOffices.GetByName(editorialOfficeName) != null;
+
+    public async Task<bool> HasEditorialOffice(string userId) =>
+        await _applicationUserLogic.HasEditorialOffice(userId);
+
+    private async Task<string> GetOwnerInfo(string ownerId)
+    {
+        var owner = await _applicationUserLogic.GetManager().FindByIdAsync(ownerId);
+        return $"{owner.Name} {owner.Surname}";
     }
 }

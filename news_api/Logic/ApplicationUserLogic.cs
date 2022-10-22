@@ -33,6 +33,22 @@ public class ApplicationUserLogic : IApplicationUserLogic
 
         return await _userManager.UpdateAsync(user);
     }
+    
+    public async Task<IdentityResult> DeleteEditorialOffice(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "UserNotFound",
+                Description = "User not found"
+            });
+        }
+        user.EditorialOfficeId = null;
+
+        return await _userManager.UpdateAsync(user);
+    }
 
     public UserManager<ApplicationUser> GetManager()
     {
@@ -47,6 +63,6 @@ public class ApplicationUserLogic : IApplicationUserLogic
             return false;
         }
 
-        return user.EditorialOfficeId is not null;
+        return !string.IsNullOrEmpty(user.EditorialOfficeId);
     }
 }

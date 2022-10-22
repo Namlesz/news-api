@@ -41,7 +41,6 @@ public class EditorialOfficeController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [Route("{editorialOfficeName}")]
     public async Task<IActionResult> GetByName([FromRoute] string editorialOfficeName)
     {
@@ -49,6 +48,37 @@ public class EditorialOfficeController : ControllerBase
         if (editorialOffice is null)
             return NotFound();
 
-        return Ok(editorialOffice);
+        return Ok(editorialOffice.ToInfo());
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("{id}")]
+    public async Task<IActionResult> GetById([FromRoute] string id)
+    {
+        var editorialOffice = await _editorialOfficesLogic.GetById(id);
+        if (editorialOffice is null)
+            return NotFound();
+
+        return Ok(editorialOffice.ToInfo());
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> Delete([FromQuery] string userId, string editorialOfficeId)
+    {
+        if (!await _editorialOfficesLogic.HasEditorialOffice(userId))
+            return NotFound("User doesn't have editorial office");
+
+        var editorialOffice = await _editorialOfficesLogic.GetById(editorialOfficeId);
+        if (editorialOffice is null)
+            return NotFound("Editorial office not found");
+        
+        var result = await _editorialOfficesLogic.Delete(userId, editorialOfficeId);
+
+        if (!result.Success)
+            return Problem(result.Message);
+
+        return Ok();
     }
 }
