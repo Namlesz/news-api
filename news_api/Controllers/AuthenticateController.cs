@@ -150,7 +150,7 @@ public class AuthenticateController : ControllerBase
             return NotFound("User not found");
 
         var token = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
-        var passwordResetLink = $"https://pifront.netlify.app/dashboard/change/{token}";
+        var passwordResetLink = $"https://pifront.netlify.app/account/change/{token}";
         EmailHelper emailHelper = new EmailHelper();
 
         if (!emailHelper.SendResetPasswordEmail(email, passwordResetLink))
@@ -170,7 +170,7 @@ public class AuthenticateController : ControllerBase
         if (!result.Succeeded)
             return Problem("Email confirmation failed!");
 
-        return Redirect("https://pifront.netlify.app/dashboard/activated");
+        return Redirect("https://pifront.netlify.app/account/activated");
     }
 
     #region Private Methods

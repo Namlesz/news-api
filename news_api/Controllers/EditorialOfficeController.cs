@@ -53,8 +53,7 @@ public class EditorialOfficeController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    [Route("{id}")]
-    public async Task<IActionResult> GetById([FromRoute] string id)
+    public async Task<IActionResult> GetById([FromQuery] string id)
     {
         var editorialOffice = await _editorialOfficesLogic.GetById(id);
         if (editorialOffice is null)
