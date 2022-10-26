@@ -19,25 +19,25 @@ public class EditorialOfficeController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> Create([FromBody] EditorialOffice office)
+    public async Task<IActionResult> Create([FromBody] EditorialOfficeDto officeDto)
     {
-        if (!office.IsValid())
+        if (!officeDto.IsValid())
         {
             return BadRequest("All fields must be filled");
         }
 
-        if (await _editorialOfficesLogic.IsExists(office.Name!))
+        if (await _editorialOfficesLogic.IsExists(officeDto.Name!))
         {
             return BadRequest("Editorial office already exists");
         }
 
-        var result = await _editorialOfficesLogic.Create(office);
+        var result = await _editorialOfficesLogic.Create(officeDto);
         if (!result.Success)
         {
             return Problem(result.Message);
         }
 
-        return Created(nameof(Create), office);
+        return Created(nameof(Create), officeDto);
     }
 
     [HttpGet]
@@ -48,7 +48,7 @@ public class EditorialOfficeController : ControllerBase
         if (editorialOffice is null)
             return NotFound();
 
-        return Ok(editorialOffice.ToInfo());
+        return Ok(editorialOffice);
     }
 
     [HttpGet]
@@ -59,7 +59,7 @@ public class EditorialOfficeController : ControllerBase
         if (editorialOffice is null)
             return NotFound();
 
-        return Ok(editorialOffice.ToInfo());
+        return Ok(editorialOffice);
     }
 
     [HttpDelete]

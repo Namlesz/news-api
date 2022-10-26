@@ -17,8 +17,13 @@ public class UserInfo
 
 public record NewUser
 (
-    [Required(ErrorMessage = "Imię jest wymagane")] string Name,
-    [Required(ErrorMessage = "Nazwisko jest wymagane")] string Surname,
-    [EmailAddress][Required(ErrorMessage = "Email jest wymagany")] string Email,
-    [Required(ErrorMessage = "Hasło jest wymagane")] string Password
+    [Required(ErrorMessage = "Imię jest wymagane")]
+    string Name,
+    [Required(ErrorMessage = "Nazwisko jest wymagane")]
+    string Surname,
+    [EmailAddress]
+    [Required(ErrorMessage = "Email jest wymagany")]
+    string Email,
+    [Required(ErrorMessage = "Hasło jest wymagane")]
+    string Password
 );

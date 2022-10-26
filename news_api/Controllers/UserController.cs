@@ -24,16 +24,17 @@ public class UserController : ControllerBase
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetAllOfficeUsers([FromQuery] string userId)
     {
-        var user = await _applicationUserLogic.GetManager().FindByIdAsync(userId);
+        var user = await _applicationUserLogic.FindUser(userId);
         if (user is null)
         {
             return NotFound();
         }
+
         if (user.EditorialOfficeId is null)
         {
             return BadRequest("User is not assigned to any editorial office");
         }
-        
+
         return Ok(await _usersCollection.GetAllOfficeUsers(user.EditorialOfficeId));
     }
 
@@ -60,7 +61,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
     {
         var result = await _applicationUserLogic.FindAndUpdate(id, data);
-        
+
         return !result.Succeeded ? Problem(result.Errors.First().Description) : Ok("User data updated");
     }
 }

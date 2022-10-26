@@ -24,8 +24,8 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        result.OwnerInfo = await GetOwnerInfo(result.OwnerId!);
-        return result;
+        result.OwnerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
+        return result.ToBase();
     }
 
     public async Task<EditorialOffice?> GetById(string id)
@@ -41,28 +41,28 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        result.OwnerInfo = await GetOwnerInfo(result.OwnerId!);
-        return result;
+        result.OwnerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
+        return result.ToBase();
     }
 
-    public async Task<BaseResult> Create(EditorialOffice office)
+    public async Task<BaseResult> Create(EditorialOfficeDto officeDto)
     {
         try
         {
-            if (await HasEditorialOffice(office.OwnerId!))
+            if (await HasEditorialOffice(officeDto.OwnerId!))
             {
                 return new BaseResult() { Success = false, Message = "User already has an editorial office" };
             }
 
-            _editorialOffices.Create(office);
+            _editorialOffices.Create(officeDto);
 
             var result =
-                await _applicationUserLogic.FindAndUpdate(office.OwnerId ?? throw new InvalidOperationException(),
-                    new UserInfo { EditorialOfficeId = office.Id.ToString() });
+                await _applicationUserLogic.FindAndUpdate(officeDto.OwnerId ?? throw new InvalidOperationException(),
+                    new UserInfo { EditorialOfficeId = officeDto.Id.ToString() });
 
             if (!result.Succeeded)
             {
-                _editorialOffices.DeleteById(office.Id);
+                _editorialOffices.DeleteById(officeDto.Id);
                 return new BaseResult() { Success = false, Message = "Error while updating user info" };
             }
 
@@ -70,7 +70,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
         }
         catch (Exception ex)
         {
-            _editorialOffices.DeleteById(office.Id);
+            _editorialOffices.DeleteById(officeDto.Id);
             return new BaseResult() { Success = false, Message = ex.Message };
         }
     }
@@ -81,9 +81,9 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
 
         if (!userUpdated.Succeeded)
         {
-            return new BaseResult() {Success = false, Message = "Error while updating user info"};
+            return new BaseResult() { Success = false, Message = "Error while updating user info" };
         }
-        
+
         if (!Guid.TryParse(officeId, out var guid))
         {
             return new BaseResult() { Success = false, Message = "Invalid id" };
@@ -97,19 +97,13 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
         {
             return new BaseResult() { Success = false, Message = "Something went wrong" };
         }
-        
+
         return new BaseResult() { Success = true };
     }
-    
+
     public async Task<bool> IsExists(string editorialOfficeName) =>
         await _editorialOffices.GetByName(editorialOfficeName) != null;
 
     public async Task<bool> HasEditorialOffice(string userId) =>
         await _applicationUserLogic.HasEditorialOffice(userId);
-
-    private async Task<string> GetOwnerInfo(string ownerId)
-    {
-        var owner = await _applicationUserLogic.GetManager().FindByIdAsync(ownerId);
-        return $"{owner.Name} {owner.Surname}";
-    }
 }

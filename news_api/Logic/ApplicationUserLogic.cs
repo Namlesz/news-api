@@ -33,7 +33,7 @@ public class ApplicationUserLogic : IApplicationUserLogic
 
         return await _userManager.UpdateAsync(user);
     }
-    
+
     public async Task<IdentityResult> DeleteEditorialOffice(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
@@ -45,16 +45,15 @@ public class ApplicationUserLogic : IApplicationUserLogic
                 Description = "User not found"
             });
         }
+
         user.EditorialOfficeId = null;
 
         return await _userManager.UpdateAsync(user);
     }
 
-    public UserManager<ApplicationUser> GetManager()
-    {
-        return _userManager;
-    }
-    
+    //TODO: Delete in next update
+    // public UserManager<ApplicationUser> GetManager() => _userManager;
+
     public async Task<bool> HasEditorialOffice(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
@@ -65,4 +64,13 @@ public class ApplicationUserLogic : IApplicationUserLogic
 
         return !string.IsNullOrEmpty(user.EditorialOfficeId);
     }
+
+    public async Task<string> GetUserIdentity(string id)
+    {
+        var owner = await _userManager.FindByIdAsync(id);
+        return $"{owner.Name} {owner.Surname}";
+    }
+
+    public async Task<ApplicationUser?> FindUser(string id) =>
+        await _userManager.FindByIdAsync(id);
 }

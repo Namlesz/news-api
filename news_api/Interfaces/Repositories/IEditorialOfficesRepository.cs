@@ -4,8 +4,8 @@ namespace news_api.Interfaces.Repositories;
 
 public interface IEditorialOfficesRepository
 {
-    public Task<EditorialOffice?> GetByName(string editorialOfficeName);
-    public void Create(EditorialOffice office);
+    public Task<EditorialOfficeDto?> GetByName(string editorialOfficeName);
+    public void Create(EditorialOfficeDto officeDto);
     public void DeleteById(Guid id);
-    public Task<EditorialOffice?> GetById(Guid id);
+    public Task<EditorialOfficeDto?> GetById(Guid id);
 }

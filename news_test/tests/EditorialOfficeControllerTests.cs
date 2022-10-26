@@ -22,7 +22,7 @@ public class EditorialOfficeControllerTests
     [OneTimeSetUp]
     public void Setup()
     {
-        var exampleEditorialOffice = new EditorialOffice()
+        var exampleEditorialOffice = new EditorialOfficeDto()
         {
             Id = Guid.Parse(IdEditorialOffice),
             Name = "Cracovia News",
@@ -31,7 +31,7 @@ public class EditorialOfficeControllerTests
         };
 
         _database = MongoDbCreator.CreateDb();
-        var collection = _database.GetCollection<EditorialOffice>("EditorialOffices");
+        var collection = _database.GetCollection<EditorialOfficeDto>("EditorialOffices");
         collection.InsertOne(exampleEditorialOffice);
         
         var mockUserManager = new Mock<UserManager<ApplicationUser>>(new Mock<IUserStore<ApplicationUser>>().Object,
@@ -53,7 +53,8 @@ public class EditorialOfficeControllerTests
             });
         
         var applicationUserLogic = new Mock<IApplicationUserLogic>();
-        applicationUserLogic.Setup(x => x.GetManager()).Returns(mockUserManager.Object);
+        applicationUserLogic.Setup(x => x.GetUserIdentity(It.IsAny<string>()))
+            .ReturnsAsync("Jan Kowalski");
         
         var editorialOfficeRepository = new EditorialOfficesRepository(collection);
         var editorialOfficeLogic = new EditorialOfficesLogic(editorialOfficeRepository, applicationUserLogic.Object);
@@ -70,10 +71,8 @@ public class EditorialOfficeControllerTests
 
         var office = okResult?.Value as EditorialOffice;
 
-        Assert.That(office?.Id.ToString(), Is.EqualTo(IdEditorialOffice));
         Assert.That(office?.Name, Is.EqualTo("Cracovia News"));
         Assert.That(office?.Town, Is.EqualTo("Cracovia"));
-        Assert.That(office?.OwnerId, Is.EqualTo(IdRedactor));
         Assert.That(office?.OwnerInfo, Is.EqualTo("Jan Kowalski"));
     }
     
@@ -91,7 +90,7 @@ public class EditorialOfficeControllerTests
     [Description("Create() -> EditorialOffice already exists")]
     public async Task DuplicateEditorialOffice()
     {
-        var editorialOffice = new EditorialOffice()
+        var editorialOffice = new EditorialOfficeDto()
         {
             Name = "Cracovia News",
             Town = "Warszawa",
@@ -108,7 +107,7 @@ public class EditorialOfficeControllerTests
     [Description("Create() -> InValid model")]
     public async Task InvalidEditorialOfficeModel()
     {
-        var editorialOffice = new EditorialOffice()
+        var editorialOffice = new EditorialOfficeDto()
         {
             OwnerId = "12345678-1234-1234-1234-123456789129"
         };

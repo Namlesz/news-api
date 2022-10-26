@@ -8,12 +8,13 @@ namespace news_api.Repositories;
 
 public class EditorialOfficesRepository : IEditorialOfficesRepository
 {
-    private readonly IMongoCollection<EditorialOffice> _editorialOffices;
+    private readonly IMongoCollection<EditorialOfficeDto> _editorialOffices;
 
     /// <summary>
     /// Unit test constructor
     /// </summary>
-    public EditorialOfficesRepository(IMongoCollection<EditorialOffice> db)
+    /// <param name="db">Mock database</param>
+    public EditorialOfficesRepository(IMongoCollection<EditorialOfficeDto> db)
     {
         _editorialOffices = db;
     }
@@ -23,18 +24,18 @@ public class EditorialOfficesRepository : IEditorialOfficesRepository
         IMongoDatabase mongoDatabase)
     {
         _editorialOffices =
-            mongoDatabase.GetCollection<EditorialOffice>(databaseOptions.Value.EditorialOfficeCollection);
+            mongoDatabase.GetCollection<EditorialOfficeDto>(databaseOptions.Value.EditorialOfficeCollection);
     }
 
-    public async Task<EditorialOffice?> GetByName(string editorialOfficeName)
+    public async Task<EditorialOfficeDto?> GetByName(string editorialOfficeName)
         => await _editorialOffices.Find(e => e.Name == editorialOfficeName).FirstOrDefaultAsync();
 
-    public async Task<EditorialOffice?> GetById(Guid id)
+    public async Task<EditorialOfficeDto?> GetById(Guid id)
         => await _editorialOffices.Find(e => e.Id == id).FirstOrDefaultAsync();
     
-    public async void Create(EditorialOffice office)
+    public async void Create(EditorialOfficeDto officeDto)
     {
-        await _editorialOffices.InsertOneAsync(office);
+        await _editorialOffices.InsertOneAsync(officeDto);
     }
 
     public async void DeleteById(Guid id)

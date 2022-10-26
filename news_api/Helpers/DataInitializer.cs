@@ -6,6 +6,10 @@ namespace news_api.Helpers;
 
 public static class DataInitializer
 {
+    /// <summary>
+    ///   Seed the database with the default app roles
+    /// </summary>
+    /// <param name="serviceProvider"></param>
     public static async Task SeedRoles(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();

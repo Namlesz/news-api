@@ -23,6 +23,12 @@ public class EmailHelper
         _smtpClient.EnableSsl = true;
     }
 
+    /// <summary>
+    /// Sends a confirmation email to the user.
+    /// </summary>
+    /// <param name="userEmail">Target email</param>
+    /// <param name="confirmationLink">Generated confirm URL</param>
+    /// <returns>True if success else false.</returns>
     public bool SendConfirmEmail(string userEmail, string confirmationLink)
     {
         _mailMessage.To.Add(new MailAddress(userEmail));
@@ -53,6 +59,12 @@ public class EmailHelper
         return false;
     }
 
+    /// <summary>
+    /// Sends a reset password email to the user.
+    /// </summary>
+    /// <param name="userEmail">Target email</param>
+    /// <param name="passwordResetLink">Generated reset URL</param>
+    /// <returns></returns>
     public bool SendResetPasswordEmail(string userEmail, string passwordResetLink)
     {
         _mailMessage.To.Add(new MailAddress(userEmail));
@@ -62,7 +74,7 @@ public class EmailHelper
         var htmlBody = RazorTemplateEngine.RenderAsync("~/Templates/ResetPasswordTemplate.cshtml",
             new ResetPasswordTemplate() { ResetLink = passwordResetLink }).Result;
         _mailMessage.Body = htmlBody;
-        
+
         try
         {
             _smtpClient.Send(_mailMessage);

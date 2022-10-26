@@ -10,7 +10,10 @@ public class UsersRepository : IUsersRepository
 {
     private readonly IMongoCollection<UserInfo> _users;
 
-    //To Unit tests
+    /// <summary>
+    /// Unit test constructor
+    /// </summary>
+    /// <param name="db">Mock db</param>
     public UsersRepository(IMongoCollection<UserInfo> db)
     {
         _users = db;
