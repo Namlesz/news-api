@@ -43,7 +43,7 @@ public class ArticleController : ControllerBase
     //     catch (Exception e)
     //     {
     //         Console.WriteLine(e);
-    //         throw;
+    //         throw ;
     //     }
     // }
 }
