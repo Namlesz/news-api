@@ -76,12 +76,14 @@ public static class ServiceExtensions
     {
         services.AddSingleton<IUsersRepository, UsersRepository>();
         services.AddSingleton<IEditorialOfficesRepository, EditorialOfficesRepository>();
+        services.AddSingleton<IArticleRepository, ArticleRepository>();
     }
 
     public static void AddLogic(this IServiceCollection services)
     {
         services.AddScoped<IApplicationUserLogic, ApplicationUserLogic>();
         services.AddScoped<IEditorialOfficesLogic, EditorialOfficesLogic>();
+        services.AddScoped<IArticleLogic, ArticleLogic>();
     }
 
     public static void InitializeRoles(this IServiceProvider service)

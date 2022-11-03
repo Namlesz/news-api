@@ -6,4 +6,5 @@ public class NewsDatabaseSettings
     public string DatabaseName { get; set; } = null!;
     public string UserCollection { get; set; } = null!;
     public string EditorialOfficeCollection { get; set; } = null!;
+    public string ArticleCollection { get; set; } = null!;
 }
