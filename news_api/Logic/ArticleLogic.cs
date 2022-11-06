@@ -23,8 +23,15 @@ public class ArticleLogic : IArticleLogic
     {
         var author = await _applicationUserLogic.FindUser(data.AuthorId);
         if (author is null)
+        {
             return new BaseResult { Success = false, Message = "Author not found" };
-        
+        }
+
+        if (string.IsNullOrWhiteSpace(author.EditorialOfficeId))
+        {
+            return new BaseResult { Success = false, Message = "Author is not assigned to any editorial office" };
+        }
+
         var readContent = await ReadFile(data.Content);
         byte[] fileData = Encoding.UTF8.GetBytes(readContent);
 
@@ -34,6 +41,7 @@ public class ArticleLogic : IArticleLogic
             Description = data.Description,
             Content = fileData,
             AuthorId = data.AuthorId,
+            OfficeId = author.EditorialOfficeId,
             PublishedAt = DateTime.Now
         };
 
@@ -46,9 +54,29 @@ public class ArticleLogic : IArticleLogic
             Console.WriteLine(e);
             return new BaseResult { Success = false, Message = "Something went wrong" };
         }
-        
+
         return new BaseResult { Success = true, Message = "Article added" };
     }
+
+    public async Task<List<Article>> GetArticles(string officeId, int range, int offset)
+    {
+        var articles = await _articleRepository.GetArticles(officeId, range, offset);
+        if (articles.Count <= 0)
+        {
+            return new List<Article>();
+        }
+
+        var result = articles.Select(x => new Article()
+        {
+            Title = x.Title,
+            Description = x.Description,
+            PublishedAt = x.PublishedAt,
+            Id = x.Id
+        }).ToList();
+
+        return result;
+    }
+
 
     private async Task<string> ReadFile(IFormFile file)
     {

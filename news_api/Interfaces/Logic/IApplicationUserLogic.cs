@@ -44,4 +44,12 @@ public interface IApplicationUserLogic
     /// <param name="id">The user ID to search for.</param>
     /// <returns>The Task that represents the asynchronous operation, containing the user matching the specified userId if it exists.</returns>
     public Task<ApplicationUser?> FindUser(string id);
+
+    /// <summary>
+    /// Find user office.
+    /// </summary>
+    /// <param name="id">User id</param>
+    /// <returns>Returns office id if exists else return null</returns>
+    public  Task<string?> GetEditorialOfficeId(string id);
+
 }

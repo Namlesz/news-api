@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using news_api.Interfaces.Repositories;
 using news_api.Models;
 using news_api.Settings;
@@ -24,8 +25,17 @@ public class ArticleRepository : IArticleRepository
         return _db.GetCollection<TDocument>(_collectionName);
     }
 
-    public async void Create(ArticleWithContent articleDto)
+    public async void Create(ArticleWithContent articleDtoDto)
     {
-        await GetCollection<ArticleWithContent>().InsertOneAsync(articleDto);
-    } 
+        await GetCollection<ArticleWithContent>().InsertOneAsync(articleDtoDto);
+    }
+
+    public async Task<List<ArticleDto>> GetArticles(string officeId, int range, int offset) =>
+        await GetCollection<ArticleDto>().AsQueryable()
+            .OrderByDescending(x => x.PublishedAt)
+            .Where(x => x.OfficeId == officeId)
+            .Skip(offset)
+            .Take(range)
+            .Select(x => x)
+            .ToListAsync();
 }

@@ -51,9 +51,6 @@ public class ApplicationUserLogic : IApplicationUserLogic
         return await _userManager.UpdateAsync(user);
     }
 
-    //TODO: Delete in next update
-    // public UserManager<ApplicationUser> GetManager() => _userManager;
-
     public async Task<bool> HasEditorialOffice(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
@@ -73,4 +70,10 @@ public class ApplicationUserLogic : IApplicationUserLogic
 
     public async Task<ApplicationUser?> FindUser(string id) =>
         await _userManager.FindByIdAsync(id);
+    
+    public async Task<string?> GetEditorialOfficeId(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        return user.EditorialOfficeId;
+    }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using news_api.Interfaces.Logic;
 using news_api.Models;
@@ -16,20 +17,34 @@ public class ArticleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetArticleWithFiles([FromForm] NewArticle article)
+    [Authorize]
+    public async Task<IActionResult> CreateArticle([FromForm] NewArticle article)
     {
         if (!_articleLogic.IsAcceptedType(article.Content))
         {
             return BadRequest("Invalid content type");
         }
-        
+
         var result = await _articleLogic.AddArticle(article);
         if (!result.Success)
         {
             return BadRequest(result.Message);
         }
-        
+
         return Ok(result.Message);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetArticles([FromQuery] string officeId, [FromQuery] int range = 10,
+        [FromQuery] int offset = 0)
+    {
+        var result = await _articleLogic.GetArticles(officeId, range, offset);
+        if (result.Count <= 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
     }
 
     // [HttpGet]
