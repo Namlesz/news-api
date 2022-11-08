@@ -16,7 +16,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
         _applicationUserLogic = applicationUserLogic;
     }
 
-    public async Task<EditorialOffice?> GetByName(string editorialOfficeName)
+    public async Task<OfficeInfo?> GetByName(string editorialOfficeName)
     {
         var result = await _editorialOffices.GetByName(editorialOfficeName);
         if (result is null)
@@ -24,11 +24,17 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        result.OwnerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
-        return result.ToBase();
+        var ownerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
+        
+        return new OfficeInfo()
+        {
+            Name = result.Name,
+            OwnerInfo = ownerInfo,
+            Town = result.Town
+        };
     }
 
-    public async Task<EditorialOffice?> GetById(string id)
+    public async Task<OfficeInfo?> GetById(string id)
     {
         if (!Guid.TryParse(id, out var guid))
         {
@@ -41,8 +47,14 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        result.OwnerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
-        return result.ToBase();
+        var ownerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
+        
+        return new OfficeInfo()
+        {
+            Name = result.Name,
+            OwnerInfo = ownerInfo,
+            Town = result.Town
+        };
     }
 
     public async Task<BaseResult> Create(EditorialOfficeDto officeDto)

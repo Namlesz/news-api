@@ -7,14 +7,11 @@ public class EditorialOffice
 {
     public string? Name { get; set; }
     public string? Town { get; set; }
-    public string? OwnerInfo { get; set; }
+}
 
-    public EditorialOffice ToBase() => new()
-    {
-        Name = Name,
-        Town = Town,
-        OwnerInfo = OwnerInfo
-    };
+public class OfficeInfo : EditorialOffice
+{
+    public string? OwnerInfo { get; set; }
 }
 
 [CollectionName("EditorialOffices")]

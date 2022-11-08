@@ -9,14 +9,14 @@ public interface IEditorialOfficesLogic
     /// </summary>
     /// <param name="editorialOfficeName">Name of editorial office</param>
     /// <returns>EditorialOffice</returns>
-    public Task<EditorialOffice?> GetByName(string editorialOfficeName);
+    public Task<OfficeInfo?> GetByName(string editorialOfficeName);
     
     /// <summary>
     /// Get basic information about editorial offices by id.
     /// </summary>
     /// <param name="id">Editorial office id</param>
     /// <returns>EditorialOffice</returns>
-    public Task<EditorialOffice?> GetById(string id);
+    public Task<OfficeInfo?> GetById(string id);
     
     /// <summary>
     /// Create new editorial office and attach it to user.

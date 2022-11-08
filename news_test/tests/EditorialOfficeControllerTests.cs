@@ -69,7 +69,7 @@ public class EditorialOfficeControllerTests
         var actionResult = await _controller.GetByName("Cracovia News");
         var okResult = actionResult as OkObjectResult;
 
-        var office = okResult?.Value as EditorialOffice;
+        var office = okResult?.Value as OfficeInfo;
 
         Assert.That(office?.Name, Is.EqualTo("Cracovia News"));
         Assert.That(office?.Town, Is.EqualTo("Cracovia"));
