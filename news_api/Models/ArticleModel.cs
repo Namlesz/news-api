@@ -10,6 +10,7 @@ public class Article
     public string? Title { get; set; }
     public string? Description { get; set; }
     public DateTime? PublishedAt { get; set; }
+    public Byte[]? Image { get; set; }
 }
 
 [BsonIgnoreExtraElements]
@@ -35,5 +36,7 @@ public record NewArticle(
     [Required(ErrorMessage = "AuthorId is required")]
     string AuthorId,
     [Required(ErrorMessage = "Content is required")]
-    IFormFile Content
+    IFormFile Content,
+    [Required(ErrorMessage = "Image is required")]
+    IFormFile Image
 );

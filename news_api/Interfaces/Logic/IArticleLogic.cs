@@ -5,11 +5,18 @@ namespace news_api.Interfaces.Logic;
 public interface IArticleLogic
 {
     /// <summary>
-    /// Validate file type
+    /// Validate content type
     /// </summary>
     /// <param name="file">IFormFile to check</param>
     /// <returns></returns>
-    public bool IsAcceptedType(IFormFile file);
+    public bool IsAcceptedContentType(IFormFile file);
+    
+    /// <summary>
+    /// Validate image type
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns></returns>
+    public bool IsAcceptedImageType(IFormFile file);
 
     /// <summary>
     /// Add article to database

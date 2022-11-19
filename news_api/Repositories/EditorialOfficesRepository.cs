@@ -31,7 +31,7 @@ public class EditorialOfficesRepository : IEditorialOfficesRepository
         => await _editorialOffices.Find(e => e.Name == editorialOfficeName).FirstOrDefaultAsync();
 
     public async Task<EditorialOfficeDto?> GetById(Guid id)
-        => await _editorialOffices.Find(e => e.Id == id).FirstOrDefaultAsync();
+        => await _editorialOffices.Find(office => office.Id == id).FirstOrDefaultAsync();
     
     public async void Create(EditorialOfficeDto officeDto)
     {

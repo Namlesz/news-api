@@ -10,7 +10,7 @@ using news_api.Settings;
 
 namespace news_test.tests;
 
-public class Tests
+public class UserControllerTests
 {
     private IMongoDatabase _database = null!;
     private UserController _controller = null!;
@@ -56,9 +56,9 @@ public class Tests
                     return Task.FromResult(new ApplicationUser
                     {
                         EditorialOfficeId = EditorialOfficeId
-                    });
+                    })!;
                 }
-                return Task.FromResult(new ApplicationUser());
+                return Task.FromResult(new ApplicationUser())!;
             });
        
 

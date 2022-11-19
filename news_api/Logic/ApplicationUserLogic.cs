@@ -65,7 +65,7 @@ public class ApplicationUserLogic : IApplicationUserLogic
     public async Task<string> GetUserIdentity(string id)
     {
         var owner = await _userManager.FindByIdAsync(id);
-        return $"{owner.Name} {owner.Surname}";
+        return $"{owner!.Name} {owner.Surname}";
     }
 
     public async Task<ApplicationUser?> FindUser(string id) =>
@@ -74,6 +74,6 @@ public class ApplicationUserLogic : IApplicationUserLogic
     public async Task<string?> GetEditorialOfficeId(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
-        return user.EditorialOfficeId;
+        return user?.EditorialOfficeId;
     }
 }

@@ -56,7 +56,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [HttpPost]
+    [HttpPut]
     [Authorize]
     public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
     {

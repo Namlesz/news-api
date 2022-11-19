@@ -20,9 +20,14 @@ public class ArticleController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateArticle([FromForm] NewArticle article)
     {
-        if (!_articleLogic.IsAcceptedType(article.Content))
+        if (!_articleLogic.IsAcceptedContentType(article.Content))
         {
             return BadRequest("Invalid content type");
+        }
+        
+        if (!_articleLogic.IsAcceptedImageType(article.Image))
+        {
+            return BadRequest("Invalid image type");
         }
 
         var result = await _articleLogic.AddArticle(article);
@@ -34,6 +39,7 @@ public class ArticleController : ControllerBase
         return Ok(result.Message);
     }
 
+    //TODO: Add optional filters 
     [HttpGet]
     public async Task<IActionResult> GetArticles([FromQuery] string officeId, [FromQuery] int range = 10,
         [FromQuery] int offset = 0)

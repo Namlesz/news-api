@@ -47,7 +47,7 @@ public class AuthenticateController : ControllerBase
 
         var authClaims = new List<Claim>
         {
-            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.Name, user.UserName!),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
@@ -182,7 +182,7 @@ public class AuthenticateController : ControllerBase
 
         EmailHelper emailHelper = new EmailHelper();
 
-        return emailHelper.SendConfirmEmail(user.Email, confirmationLink!);
+        return emailHelper.SendConfirmEmail(user.Email!, confirmationLink!);
     }
 
     private async Task<ApplicationUser?> CreateUser(NewUser data, string? editorialOfficeId = null)
@@ -203,7 +203,7 @@ public class AuthenticateController : ControllerBase
 
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"] ?? throw new MissingFieldException("Can't load encode key.")));
 
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],

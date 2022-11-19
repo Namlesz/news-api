@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using news_api.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddRepositories();
 builder.Services.AddLogic();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSwagger();
 builder.Services.ConfigureCors();
 
 var app = builder.Build();

@@ -14,9 +14,6 @@ public interface IApplicationUserLogic
     /// <returns>Identity result</returns>
     public Task<IdentityResult> FindAndUpdate(string id, UserInfo data);
 
-    //TODO: Delete in next update
-    //public UserManager<ApplicationUser> GetManager();
-
     /// <summary>
     /// Check if user has assigned editorial office.
     /// </summary>

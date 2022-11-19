@@ -9,6 +9,8 @@ public class ArticleLogic : IArticleLogic
 {
     private readonly IArticleRepository _articleRepository;
     private readonly IApplicationUserLogic _applicationUserLogic;
+    private readonly List<string> _imageTypes = new() { ".jpeg", ".png" };
+    private readonly List<string> _contentType = new() { ".html" };
 
     public ArticleLogic(IArticleRepository articleRepository, IApplicationUserLogic applicationUserLogic)
     {
@@ -16,9 +18,12 @@ public class ArticleLogic : IArticleLogic
         _applicationUserLogic = applicationUserLogic;
     }
 
-    public bool IsAcceptedType(IFormFile file) =>
-        Equals(Path.GetExtension(file.FileName), ".html");
-
+    public bool IsAcceptedContentType(IFormFile file)
+        => CheckExtension(file, _contentType);
+    
+    public bool IsAcceptedImageType(IFormFile file)
+        => CheckExtension(file, _imageTypes);
+    
     public async Task<BaseResult> AddArticle(NewArticle data)
     {
         var author = await _applicationUserLogic.FindUser(data.AuthorId);
@@ -32,16 +37,22 @@ public class ArticleLogic : IArticleLogic
             return new BaseResult { Success = false, Message = "Author is not assigned to any editorial office" };
         }
 
+        // Read file content
         var readContent = await ReadFile(data.Content);
-        byte[] fileData = Encoding.UTF8.GetBytes(readContent);
+        byte[] contentDataBytes = Encoding.UTF8.GetBytes(readContent);
+        
+        // Read image
+        var readImage = await ReadFile(data.Image);
+        byte[] imageDataBytes = Encoding.UTF8.GetBytes(readImage);
 
         var article = new ArticleWithContent()
         {
             Title = data.Title,
             Description = data.Description,
-            Content = fileData,
+            Content = contentDataBytes,
             AuthorId = data.AuthorId,
             OfficeId = author.EditorialOfficeId,
+            Image = imageDataBytes,
             PublishedAt = DateTime.Now
         };
 
@@ -58,6 +69,7 @@ public class ArticleLogic : IArticleLogic
         return new BaseResult { Success = true, Message = "Article added" };
     }
 
+    //TODO: Add filters logic, return image (check if byte array works) 
     public async Task<List<Article>> GetArticles(string officeId, int range, int offset)
     {
         var articles = await _articleRepository.GetArticles(officeId, range, offset);
@@ -83,5 +95,11 @@ public class ArticleLogic : IArticleLogic
         await using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream);
         return await reader.ReadToEndAsync();
+    }
+    
+    private bool CheckExtension(IFormFile file, List<string> extensions)
+    {
+        var extension = Path.GetExtension(file.FileName);
+        return extensions.Any(type => type == extension);
     }
 }

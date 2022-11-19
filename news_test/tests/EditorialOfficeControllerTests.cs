@@ -47,9 +47,9 @@ public class EditorialOfficeControllerTests
                     {
                         Name = "Jan",
                         Surname = "Kowalski"
-                    });
+                    })!;
                 }
-                return Task.FromResult(new ApplicationUser());
+                return Task.FromResult(new ApplicationUser())!;
             });
         
         var applicationUserLogic = new Mock<IApplicationUserLogic>();
