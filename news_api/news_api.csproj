@@ -6,6 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <LangVersion>11</LangVersion>
+        <PackageVersion>1.1.0</PackageVersion>
+        <Title>NewsApi</Title>
+        <Authors>Adam Wiśniewski</Authors>
+        <Description>App for create news with own organization.</Description>
+        <Copyright>MIT</Copyright>
+        <NeutralLanguage>en-PL</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>

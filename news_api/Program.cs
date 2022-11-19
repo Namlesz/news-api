@@ -20,7 +20,7 @@ var app = builder.Build();
 app.Services.InitializeRoles();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.ConfigureSwaggerUI();
 
 if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();

@@ -142,4 +142,15 @@ public static class ServiceExtensions
             });
         });
     }
+
+    // ReSharper disable once InconsistentNaming
+    public static void ConfigureSwaggerUI(this WebApplication app)
+    {
+        app.UseSwaggerUI(options =>
+        {
+            options.RoutePrefix = "";
+            options.SwaggerEndpoint("swagger/v1/swagger.json", "news_api v1");
+        });
+    }
+
 }
