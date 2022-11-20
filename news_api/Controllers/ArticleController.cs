@@ -53,6 +53,18 @@ public class ArticleController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetArticle([FromQuery] string articleId)
+    {
+        var result = await _articleLogic.GetArticle(articleId);
+        if (result is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+    
     // [HttpGet]
     // public async Task<IActionResult> GetFile()
     // {

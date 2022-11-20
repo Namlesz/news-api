@@ -23,7 +23,7 @@ public interface IArticleLogic
     /// </summary>
     /// <param name="data">NewArticle model</param>
     /// <returns>BaseResult with success flag and specific message according to result</returns>
-    Task<BaseResult> AddArticle(NewArticle data);
+    public Task<BaseResult> AddArticle(NewArticle data);
 
     /// <summary>
     /// Get all articles from office by offset and limit
@@ -32,5 +32,12 @@ public interface IArticleLogic
     /// <param name="range">Size of articles to get</param>
     /// <param name="offset">Start index where index 0 is the newest article</param>
     /// <returns>List of office articles</returns>
-    Task<List<Article>> GetArticles(string officeId, int range, int offset);
+    public Task<List<Article>> GetArticles(string officeId, int range, int offset);
+
+    /// <summary>
+    /// Find article by id
+    /// </summary>
+    /// <param name="articleId">Article id</param>
+    /// <returns>Article with content</returns>
+    public Task<ArticleWithContent?> GetArticle(string articleId);
 }

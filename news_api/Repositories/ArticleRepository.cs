@@ -38,4 +38,8 @@ public class ArticleRepository : IArticleRepository
             .Take(range)
             .Select(x => x)
             .ToListAsync();
+
+    public async Task<ArticleWithContent?> GetArticle(Guid articleId) => 
+        await GetCollection<ArticleWithContent>().AsQueryable()
+            .FirstOrDefaultAsync(x => x.Id == articleId);    
 }

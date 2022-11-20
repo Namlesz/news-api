@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
 
@@ -19,9 +20,12 @@ public class EditorialOfficeDto : EditorialOffice
 {
     [BsonId] public Guid Id { get; set; }
     public string? OwnerId { get; set; }
-
-    public bool IsValid()
-    {
-        return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Town) && !string.IsNullOrEmpty(OwnerId);
-    }
 }
+
+public record NewOffice(
+    [Required(ErrorMessage = "Name is required")]
+    string Name,
+    [Required(ErrorMessage = "Town is required")]
+    string Town,
+    [Required(ErrorMessage = "Owner id is required")]
+    string OwnerId);

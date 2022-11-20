@@ -19,25 +19,20 @@ public class EditorialOfficeController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> Create([FromBody] EditorialOfficeDto officeDto)
+    public async Task<IActionResult> Create([FromBody] NewOffice office)
     {
-        if (!officeDto.IsValid())
-        {
-            return BadRequest("All fields must be filled");
-        }
-
-        if (await _editorialOfficesLogic.IsExists(officeDto.Name!))
+        if (await _editorialOfficesLogic.IsExists(office.Name))
         {
             return BadRequest("Editorial office already exists");
         }
 
-        var result = await _editorialOfficesLogic.Create(officeDto);
+        var result = await _editorialOfficesLogic.Create(office);
         if (!result.Success)
         {
             return Problem(result.Message);
         }
 
-        return Created(nameof(Create), officeDto);
+        return Created(nameof(Create), office);
     }
 
     [HttpGet]

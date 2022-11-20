@@ -83,12 +83,22 @@ public class ArticleLogic : IArticleLogic
             Title = x.Title,
             Description = x.Description,
             PublishedAt = x.PublishedAt,
+            Image = x.Image,
             Id = x.Id
         }).ToList();
 
         return result;
     }
 
+    public async Task<ArticleWithContent?> GetArticle(string articleId)
+    {
+        if (!Guid.TryParse(articleId, out var guid))
+        {
+            return null;
+        }
+
+        return await _articleRepository.GetArticle(guid);
+    }
 
     private async Task<string> ReadFile(IFormFile file)
     {

@@ -19,4 +19,10 @@ public interface IArticleRepository
     /// <returns>Returns Article List or empty list</returns>
     public Task<List<ArticleDto>> GetArticles(string officeId, int range, int offset);
 
+    /// <summary>
+    /// Get an article by id
+    /// </summary>
+    /// <param name="articleId">Article id (GUID)</param>
+    /// <returns>Article with content</returns>
+    public Task<ArticleWithContent?> GetArticle(Guid articleId);
 }
