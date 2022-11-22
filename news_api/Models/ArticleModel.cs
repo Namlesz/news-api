@@ -8,7 +8,6 @@ public class Article
 {
     [BsonId] public Guid Id { get; set; }
     public string? Title { get; set; }
-    public string? Description { get; set; }
     public DateTime? PublishedAt { get; set; }
     public Byte[]? Image { get; set; }
 }
@@ -31,8 +30,6 @@ public class ArticleWithContent : ArticleDto
 public record NewArticle(
     [Required(ErrorMessage = "Title is required")]
     string Title,
-    [Required(ErrorMessage = "Description is required")]
-    string Description,
     [Required(ErrorMessage = "AuthorId is required")]
     string AuthorId,
     [Required(ErrorMessage = "Content is required")]

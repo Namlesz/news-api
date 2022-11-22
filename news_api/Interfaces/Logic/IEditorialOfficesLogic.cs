@@ -24,7 +24,7 @@ public interface IEditorialOfficesLogic
     /// <param name="officeDto">Editorial office data</param>
     /// <returns>BaseResult with Success flag</returns>
     /// <exception cref="InvalidOperationException">If an error occurs, the editorial office is removed from the database.</exception>
-    public Task<BaseResult> Create(NewOffice officeDto);
+    public Task<BaseTypeResult<EditorialOfficeDto>> Create(NewOffice officeDto);
     
     /// <summary>
     /// Check if editorial office with given name exists.

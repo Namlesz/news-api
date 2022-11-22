@@ -32,7 +32,7 @@ public class EditorialOfficeController : ControllerBase
             return Problem(result.Message);
         }
 
-        return Created(nameof(Create), office);
+        return Created(nameof(Create), result.Data);
     }
 
     [HttpGet]

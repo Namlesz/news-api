@@ -48,7 +48,6 @@ public class ArticleLogic : IArticleLogic
         var article = new ArticleWithContent()
         {
             Title = data.Title,
-            Description = data.Description,
             Content = contentDataBytes,
             AuthorId = data.AuthorId,
             OfficeId = author.EditorialOfficeId,
@@ -81,7 +80,6 @@ public class ArticleLogic : IArticleLogic
         var result = articles.Select(x => new Article()
         {
             Title = x.Title,
-            Description = x.Description,
             PublishedAt = x.PublishedAt,
             Image = x.Image,
             Id = x.Id
