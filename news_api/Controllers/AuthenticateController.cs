@@ -29,7 +29,14 @@ public class AuthenticateController : ControllerBase
         _roleManager = roleManager;
         _configuration = configuration;
     }
-
+    
+    /// <summary>
+    /// Get access token
+    /// </summary>
+    /// <response code="200">Return user and access token.</response>
+    /// <response code="401">Email not confirmed.</response>
+    /// <response code="404">User not found.</response>
+    /// <response code="500">Ops! Uncaught error.</response>
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] Login login)
     {
@@ -66,6 +73,13 @@ public class AuthenticateController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Create editor for redaction
+    /// </summary>
+    /// <response code="200">User created.</response>
+    /// <response code="404">Not found owner/ Owner office is missing.</response>
+    /// <response code="409">User already exists.</response>
+    /// <response code="500">Ops! Can't create user.</response>
     [HttpPost]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> RegisterEditor([FromQuery] string ownerId, [FromBody] NewUser data)
@@ -104,6 +118,12 @@ public class AuthenticateController : ControllerBase
         return Ok("User created successfully!");
     }
 
+    /// <summary>
+    /// Create new account
+    /// </summary>
+    /// <response code="200">User created.</response>
+    /// <response code="409">User already exists.</response>
+    /// <response code="500">Ops! Can't create user.</response>
     [HttpPost]
     public async Task<IActionResult> RegisterAdmin([FromBody] NewUser data)
     {
@@ -128,6 +148,12 @@ public class AuthenticateController : ControllerBase
         return Ok("User created successfully! Pleas confirm your email.");
     }
 
+    /// <summary>
+    /// Change password for account
+    /// </summary>
+    /// <response code="200">Password changed.</response>
+    /// <response code="404">User not found.</response>
+    /// <response code="500">Ops! Can't change password.</response>
     [HttpPost]
     public async Task<IActionResult> ChangePassword([FromBody] PasswordChange data)
     {
@@ -142,6 +168,12 @@ public class AuthenticateController : ControllerBase
         return Ok("Password changed successfully");
     }
 
+    /// <summary>
+    /// Send reset link to email
+    /// </summary>
+    /// <response code="200">Email sent.</response>
+    /// <response code="404">User not found.</response>
+    /// <response code="500">Ops! Can't send link.</response>
     [HttpGet]
     public async Task<IActionResult> ResetPassword([FromQuery] string email)
     {
@@ -159,6 +191,12 @@ public class AuthenticateController : ControllerBase
         return Ok("Password reset link sent to email");
     }
 
+    /// <summary>
+    /// Confirm email registration
+    /// </summary>
+    /// <response code="308">Confirmed and redirect to login page.</response>
+    /// <response code="404">User not found.</response>
+    /// <response code="500">Ops! Something went wrong.</response>
     [HttpGet]
     public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
     {
@@ -169,7 +207,7 @@ public class AuthenticateController : ControllerBase
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded)
             return Problem("Email confirmation failed!");
-
+        
         return Redirect("https://pifront.netlify.app/account/activated");
     }
 

@@ -17,6 +17,12 @@ public class EditorialOfficeController : ControllerBase
         _editorialOfficesLogic = editorialOfficesLogic;
     }
 
+    /// <summary>
+    /// Create new editorial office
+    /// </summary>
+    /// <response code="201">Office created.</response>
+    /// <response code="400">Editorial office exists.</response>
+    /// <response code="500">Ops! Can't create office.</response>
     [HttpPost]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Create([FromBody] NewOffice office)

@@ -16,6 +16,12 @@ public class ArticleController : ControllerBase
         _articleLogic = articleLogic;
     }
 
+    /// <summary>
+    /// Save article to database
+    /// </summary>
+    /// <response code="200">Article created.</response>
+    /// <response code="400">Wrong content/image type.</response>
+    /// <response code="500">Ops! Can't create article.</response>
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateArticle([FromForm] NewArticle article)
@@ -39,7 +45,12 @@ public class ArticleController : ControllerBase
         return Ok(result.Message);
     }
 
-    //TODO: Add optional filters 
+    //TODO: Add optional filters
+    /// <summary>
+    /// Get all articles from office
+    /// </summary>
+    /// <response code="200">Return list of articles.</response>
+    /// <response code="404">Not found an article.</response>
     [HttpGet]
     public async Task<IActionResult> GetArticles([FromQuery] string officeId, [FromQuery] int range = 10,
         [FromQuery] int offset = 0)
@@ -52,7 +63,11 @@ public class ArticleController : ControllerBase
 
         return Ok(result);
     }
-
+    /// <summary>
+    /// Get article details (including content)
+    /// </summary>
+    /// <response code="200">Return article.</response>
+    /// <response code="404">Not found article.</response>
     [HttpGet]
     public async Task<IActionResult> GetArticle([FromQuery] string articleId)
     {
