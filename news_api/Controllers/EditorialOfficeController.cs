@@ -41,6 +41,11 @@ public class EditorialOfficeController : ControllerBase
         return Created(nameof(Create), result.Data);
     }
 
+    /// <summary>
+    /// Get office info by name
+    /// </summary>
+    /// <response code="200">Return office.</response>
+    /// <response code="404">Not found an office.</response>
     [HttpGet]
     [Route("{editorialOfficeName}")]
     public async Task<IActionResult> GetByName([FromRoute] string editorialOfficeName)
@@ -52,6 +57,11 @@ public class EditorialOfficeController : ControllerBase
         return Ok(editorialOffice);
     }
 
+    /// <summary>
+    /// Get office info by name
+    /// </summary>
+    /// <response code="200">Return office.</response>
+    /// <response code="404">Not found an office.</response>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetById([FromQuery] string id)
@@ -63,6 +73,12 @@ public class EditorialOfficeController : ControllerBase
         return Ok(editorialOffice);
     }
 
+    /// <summary>
+    /// Get office info by name
+    /// </summary>
+    /// <response code="200">Deleted.</response>
+    /// <response code="404">Not found an office/user don't have office.</response>
+    /// <response code="500">Ops! Problem when deleting office.</response>
     [HttpDelete]
     [Authorize]
     public async Task<IActionResult> Delete([FromQuery] string userId, string editorialOfficeId)

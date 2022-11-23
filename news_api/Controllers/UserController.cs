@@ -20,6 +20,12 @@ public class UserController : ControllerBase
         _usersCollection = usersCollection;
     }
 
+    /// <summary>
+    /// Get all users from specified office
+    /// </summary>
+    /// <response code="200">Return list of users.</response>
+    /// <response code="400">User doesn't have an office.</response>
+    /// <response code="404">User id not found.</response>
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetAllOfficeUsers([FromQuery] string userId)
@@ -37,7 +43,13 @@ public class UserController : ControllerBase
 
         return Ok(await _usersCollection.GetAllOfficeUsers(user.EditorialOfficeId));
     }
-
+    
+    /// <summary>
+    /// Get all users from specified office
+    /// </summary>
+    /// <response code="200">Return user info.</response>
+    /// <response code="404">User not found.</response>
+    /// <response code="500">Invalid user id format .</response>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetUserInfo([FromQuery] string id)
@@ -56,6 +68,11 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    /// <summary>
+    /// Update user data in database
+    /// </summary>
+    /// <response code="200">Updated.</response>
+    /// <response code="500">Ops! Can't update user.</response>
     [HttpPut]
     [Authorize]
     public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
