@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using news_api.Interfaces.Logic;
 using news_api.Interfaces.Repositories;
 using news_api.Logic;
 using news_api.Repositories;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace news_api.Settings;
 
@@ -113,33 +115,20 @@ public static class ServiceExtensions
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new() { Title = "news_api", Version = "v1" });
+            options.OperationFilter<SecurityRequirementsOperationFilter>();
             options.AddSecurityDefinition("Bearer", new()
             {
-                Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
-                      Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345test'",
                 Name = "Authorization",
-                In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
+                              "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                              "Example: 'Bearer {{token}}'",
             });
-            options.AddSecurityRequirement(new()
-            {
-                {
-                    new()
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header,
-                    },
-                    new List<string>()
-                }
-            });
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
     }
 
@@ -152,5 +141,4 @@ public static class ServiceExtensions
             options.SwaggerEndpoint("swagger/v1/swagger.json", "news_api v1");
         });
     }
-
 }

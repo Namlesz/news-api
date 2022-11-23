@@ -24,7 +24,7 @@ public class ArticleController : ControllerBase
         {
             return BadRequest("Invalid content type");
         }
-        
+
         if (!_articleLogic.IsAcceptedImageType(article.Image))
         {
             return BadRequest("Invalid image type");
@@ -64,19 +64,4 @@ public class ArticleController : ControllerBase
 
         return Ok(result);
     }
-    
-    // [HttpGet]
-    // public async Task<IActionResult> GetFile()
-    // {
-    //     try
-    //     {
-    //         var stream = new FileStream("/Users/adam.cherry/Downloads/Created.html", FileMode.Open);
-    //         return File(stream, "application/octet-stream", "Created2.html");
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e);
-    //         throw;
-    //     }
-    // }
 }

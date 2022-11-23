@@ -1,4 +1,3 @@
-using Microsoft.OpenApi.Models;
 using news_api.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
