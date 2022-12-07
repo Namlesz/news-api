@@ -2,14 +2,14 @@ using System.Net.Mail;
 using NewsApp.api.Templates;
 using Razor.Templating.Core;
 
-namespace NewsApp.api.Helpers;
+namespace NewsApp.api.Services;
 
-public class EmailHelper
+public class EmailService
 {
     private readonly MailMessage _mailMessage;
     private readonly SmtpClient _smtpClient;
 
-    public EmailHelper()
+    public EmailService()
     {
         var password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? throw new InvalidOperationException();
         var email = Environment.GetEnvironmentVariable("EMAIL_ACCOUNT") ?? throw new InvalidOperationException();

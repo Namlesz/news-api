@@ -2,16 +2,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Moq;
+using NewsApp.api.Context;
 using NewsApp.api.Controllers;
 using NewsApp.api.Interfaces.Logic;
-using NewsApp.api.Logic;
 using NewsApp.api.Models;
 using NewsApp.api.Repositories;
+using NewsApp.api.Services;
 using NewsApp.api.Settings;
 
 namespace NewsApp.Test.tests;
 
-public class EditorialOfficeControllerTests
+public class OfficeTests
 {
     private IMongoDatabase _database = null!;
     private EditorialOfficeController _controller = null!;
@@ -53,12 +54,12 @@ public class EditorialOfficeControllerTests
                 return Task.FromResult(new ApplicationUser())!;
             });
 
-        var applicationUserLogic = new Mock<IApplicationUserLogic>();
+        var applicationUserLogic = new Mock<IUserService>();
         applicationUserLogic.Setup(x => x.GetUserIdentity(It.IsAny<string>()))
             .ReturnsAsync("Jan Kowalski");
 
         var editorialOfficeRepository = new EditorialOfficesRepository(collection);
-        var editorialOfficeLogic = new EditorialOfficesLogic(editorialOfficeRepository, applicationUserLogic.Object);
+        var editorialOfficeLogic = new OfficeService(editorialOfficeRepository, applicationUserLogic.Object);
 
         _controller = new EditorialOfficeController(editorialOfficeLogic);
     }

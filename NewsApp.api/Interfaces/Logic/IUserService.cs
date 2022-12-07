@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
+using NewsApp.api.Context;
 using NewsApp.api.Models;
-using NewsApp.api.Settings;
 
 namespace NewsApp.api.Interfaces.Logic;
 
-public interface IApplicationUserLogic
+public interface IUserService
 {
     /// <summary>
     /// Updates user information with non-null fields from the model.

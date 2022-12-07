@@ -2,7 +2,7 @@ using NewsApp.api.Models;
 
 namespace NewsApp.api.Interfaces.Logic;
 
-public interface IArticleLogic
+public interface IArticleService
 {
     /// <summary>
     /// Validate content type

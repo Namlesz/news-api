@@ -2,15 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Moq;
+using NewsApp.api.Context;
 using NewsApp.api.Controllers;
-using NewsApp.api.Logic;
 using NewsApp.api.Models;
 using NewsApp.api.Repositories;
+using NewsApp.api.Services;
 using NewsApp.api.Settings;
 
 namespace NewsApp.Test.tests;
 
-public class UserControllerTests
+public class UserTests
 {
     private IMongoDatabase _database = null!;
     private UserController _controller = null!;
@@ -66,7 +67,7 @@ public class UserControllerTests
                 x => x.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
 
-        var userLogic = new ApplicationUserLogic(mockUserManager.Object);
+        var userLogic = new UserService(mockUserManager.Object);
         var userRepo = new UsersRepository(collection);
 
         _controller = new UserController(userRepo, userLogic);

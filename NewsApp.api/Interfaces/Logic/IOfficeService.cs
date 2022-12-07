@@ -2,7 +2,7 @@ using NewsApp.api.Models;
 
 namespace NewsApp.api.Interfaces.Logic;
 
-public interface IEditorialOfficesLogic
+public interface IOfficeService
 {
     /// <summary>
     /// Get basic information about editorial offices by name.

@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using NewsApp.api.Helpers;
+using NewsApp.api.Context;
 using NewsApp.api.Models;
+using NewsApp.api.Services;
 using NewsApp.api.Settings;
 
 namespace NewsApp.api.Controllers;
@@ -183,9 +184,9 @@ public class AuthenticateController : ControllerBase
 
         var token = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
         var passwordResetLink = $"https://pifront.netlify.app/account/change/{token}";
-        EmailHelper emailHelper = new EmailHelper();
+        EmailService emailService = new EmailService();
 
-        if (!emailHelper.SendResetPasswordEmail(email, passwordResetLink))
+        if (!emailService.SendResetPasswordEmail(email, passwordResetLink))
             return Problem("Unable to send password reset email");
 
         return Ok("Password reset link sent to email");
@@ -218,9 +219,9 @@ public class AuthenticateController : ControllerBase
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
-        EmailHelper emailHelper = new EmailHelper();
+        EmailService emailService = new EmailService();
 
-        return emailHelper.SendConfirmEmail(user.Email!, confirmationLink!);
+        return emailService.SendConfirmEmail(user.Email!, confirmationLink!);
     }
 
     private async Task<ApplicationUser?> CreateUser(NewUser data, string? editorialOfficeId = null)

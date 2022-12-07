@@ -1,4 +1,4 @@
-using NewsApp.api.Settings;
+using NewsApp.api.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 

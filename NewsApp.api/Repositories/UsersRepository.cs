@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using NewsApp.api.Context;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Models;
-using NewsApp.api.Settings;
 
 namespace NewsApp.api.Repositories;
 
@@ -20,7 +20,7 @@ public class UsersRepository : IUsersRepository
     }
 
     public UsersRepository(
-        IOptions<NewsDatabaseSettings> databaseOptions,
+        IOptions<DatabaseSettings> databaseOptions,
         IMongoDatabase mongoDatabase)
     {
         var dbSettings = databaseOptions.Value;

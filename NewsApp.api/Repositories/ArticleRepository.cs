@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using NewsApp.api.Context;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Models;
-using NewsApp.api.Settings;
 
 namespace NewsApp.api.Repositories;
 
@@ -13,7 +13,7 @@ public class ArticleRepository : IArticleRepository
     private readonly string _collectionName;
 
     public ArticleRepository(
-        IOptions<NewsDatabaseSettings> databaseOptions,
+        IOptions<DatabaseSettings> databaseOptions,
         IMongoDatabase mongoDatabase)
     {
         _db = mongoDatabase;

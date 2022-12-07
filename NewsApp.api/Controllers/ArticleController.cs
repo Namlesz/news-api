@@ -9,11 +9,11 @@ namespace NewsApp.api.Controllers;
 [Route("[controller]/[action]")]
 public class ArticleController : ControllerBase
 {
-    private readonly IArticleLogic _articleLogic;
+    private readonly IArticleService _articleService;
 
-    public ArticleController(IArticleLogic articleLogic)
+    public ArticleController(IArticleService articleService)
     {
-        _articleLogic = articleLogic;
+        _articleService = articleService;
     }
 
     /// <summary>
@@ -31,12 +31,12 @@ public class ArticleController : ControllerBase
         //     return BadRequest("Invalid content type");
         // }
 
-        if (!_articleLogic.IsAcceptedImageType(article.Image))
+        if (!_articleService.IsAcceptedImageType(article.Image))
         {
             return BadRequest("Invalid image type");
         }
 
-        var result = await _articleLogic.AddArticle(article);
+        var result = await _articleService.AddArticle(article);
         if (!result.Success)
         {
             return BadRequest(result.Message);
@@ -55,7 +55,7 @@ public class ArticleController : ControllerBase
     public async Task<IActionResult> GetArticles([FromQuery] string officeId, [FromQuery] int range = 10,
         [FromQuery] int offset = 0)
     {
-        var result = await _articleLogic.GetArticles(officeId, range, offset);
+        var result = await _articleService.GetArticles(officeId, range, offset);
         if (result.Count <= 0)
         {
             return NotFound();
@@ -71,7 +71,7 @@ public class ArticleController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetArticle([FromQuery] string articleId)
     {
-        var result = await _articleLogic.GetArticle(articleId);
+        var result = await _articleService.GetArticle(articleId);
         if (result is null)
         {
             return NotFound();

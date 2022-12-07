@@ -10,11 +10,11 @@ namespace NewsApp.api.Controllers;
 [Route("[controller]/[action]")]
 public class EditorialOfficeController : ControllerBase
 {
-    private readonly IEditorialOfficesLogic _editorialOfficesLogic;
+    private readonly IOfficeService _officeService;
 
-    public EditorialOfficeController(IEditorialOfficesLogic editorialOfficesLogic)
+    public EditorialOfficeController(IOfficeService officeService)
     {
-        _editorialOfficesLogic = editorialOfficesLogic;
+        _officeService = officeService;
     }
 
     /// <summary>
@@ -27,12 +27,12 @@ public class EditorialOfficeController : ControllerBase
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Create([FromBody] NewOffice office)
     {
-        if (await _editorialOfficesLogic.IsExists(office.Name))
+        if (await _officeService.IsExists(office.Name))
         {
             return BadRequest("Editorial office already exists");
         }
 
-        var result = await _editorialOfficesLogic.Create(office);
+        var result = await _officeService.Create(office);
         if (!result.Success)
         {
             return Problem(result.Message);
@@ -50,7 +50,7 @@ public class EditorialOfficeController : ControllerBase
     [Route("{editorialOfficeName}")]
     public async Task<IActionResult> GetByName([FromRoute] string editorialOfficeName)
     {
-        var editorialOffice = await _editorialOfficesLogic.GetByName(editorialOfficeName);
+        var editorialOffice = await _officeService.GetByName(editorialOfficeName);
         if (editorialOffice is null)
             return NotFound();
 
@@ -66,7 +66,7 @@ public class EditorialOfficeController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetById([FromQuery] string id)
     {
-        var editorialOffice = await _editorialOfficesLogic.GetById(id);
+        var editorialOffice = await _officeService.GetById(id);
         if (editorialOffice is null)
             return NotFound();
 
@@ -83,14 +83,14 @@ public class EditorialOfficeController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete([FromQuery] string userId, string editorialOfficeId)
     {
-        if (!await _editorialOfficesLogic.HasEditorialOffice(userId))
+        if (!await _officeService.HasEditorialOffice(userId))
             return NotFound("User doesn't have editorial office");
 
-        var editorialOffice = await _editorialOfficesLogic.GetById(editorialOfficeId);
+        var editorialOffice = await _officeService.GetById(editorialOfficeId);
         if (editorialOffice is null)
             return NotFound("Editorial office not found");
         
-        var result = await _editorialOfficesLogic.Delete(userId, editorialOfficeId);
+        var result = await _officeService.Delete(userId, editorialOfficeId);
 
         if (!result.Success)
             return Problem(result.Message);

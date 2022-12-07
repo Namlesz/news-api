@@ -1,7 +1,7 @@
 using AspNetCore.Identity.MongoDbCore.Models;
 using MongoDbGenericRepository.Attributes;
 
-namespace NewsApp.api.Settings;
+namespace NewsApp.api.Context;
 
 [CollectionName("Users")]
 public class ApplicationUser : MongoIdentityUser<Guid>

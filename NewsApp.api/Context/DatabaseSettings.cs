@@ -1,6 +1,6 @@
-namespace NewsApp.api.Settings;
+namespace NewsApp.api.Context;
 
-public class NewsDatabaseSettings
+public class DatabaseSettings
 {
     public string ConnectionString { get; set; } = null!;
     public string DatabaseName { get; set; } = null!;

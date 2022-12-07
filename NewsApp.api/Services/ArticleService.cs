@@ -3,19 +3,19 @@ using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Models;
 
-namespace NewsApp.api.Logic;
+namespace NewsApp.api.Services;
 
-public class ArticleLogic : IArticleLogic
+public class ArticleService : IArticleService
 {
     private readonly IArticleRepository _articleRepository;
-    private readonly IApplicationUserLogic _applicationUserLogic;
+    private readonly IUserService _userService;
     private readonly List<string> _imageTypes = new() { ".jpeg", ".png" };
     private readonly List<string> _contentType = new() { ".html" };
 
-    public ArticleLogic(IArticleRepository articleRepository, IApplicationUserLogic applicationUserLogic)
+    public ArticleService(IArticleRepository articleRepository, IUserService userService)
     {
         _articleRepository = articleRepository;
-        _applicationUserLogic = applicationUserLogic;
+        _userService = userService;
     }
 
     public bool IsAcceptedContentType(IFormFile file)
@@ -26,7 +26,7 @@ public class ArticleLogic : IArticleLogic
     
     public async Task<BaseResult> AddArticle(NewArticle data)
     {
-        var author = await _applicationUserLogic.FindUser(data.AuthorId);
+        var author = await _userService.FindUser(data.AuthorId);
         if (author is null)
         {
             return new BaseResult { Success = false, Message = "Author not found" };

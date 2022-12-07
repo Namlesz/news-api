@@ -12,11 +12,11 @@ namespace NewsApp.api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUsersRepository _usersCollection;
-    private readonly IApplicationUserLogic _applicationUserLogic;
+    private readonly IUserService _userService;
 
-    public UserController(IUsersRepository usersCollection, IApplicationUserLogic applicationUserLogic)
+    public UserController(IUsersRepository usersCollection, IUserService userService)
     {
-        _applicationUserLogic = applicationUserLogic;
+        _userService = userService;
         _usersCollection = usersCollection;
     }
 
@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetAllOfficeUsers([FromQuery] string userId)
     {
-        var user = await _applicationUserLogic.FindUser(userId);
+        var user = await _userService.FindUser(userId);
         if (user is null)
         {
             return NotFound();
@@ -77,7 +77,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
     {
-        var result = await _applicationUserLogic.FindAndUpdate(id, data);
+        var result = await _userService.FindAndUpdate(id, data);
 
         return !result.Succeeded ? Problem(result.Errors.First().Description) : Ok("User data updated");
     }

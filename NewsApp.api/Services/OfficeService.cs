@@ -2,18 +2,18 @@ using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Models;
 
-namespace NewsApp.api.Logic;
+namespace NewsApp.api.Services;
 
-public class EditorialOfficesLogic : IEditorialOfficesLogic
+public class OfficeService : IOfficeService
 {
     private readonly IEditorialOfficesRepository _editorialOffices;
-    private readonly IApplicationUserLogic _applicationUserLogic;
+    private readonly IUserService _userService;
 
-    public EditorialOfficesLogic(IEditorialOfficesRepository editorialOfficesCollection,
-        IApplicationUserLogic applicationUserLogic)
+    public OfficeService(IEditorialOfficesRepository editorialOfficesCollection,
+        IUserService userService)
     {
         _editorialOffices = editorialOfficesCollection;
-        _applicationUserLogic = applicationUserLogic;
+        _userService = userService;
     }
 
     public async Task<OfficeInfo?> GetByName(string editorialOfficeName)
@@ -24,7 +24,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        var ownerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
+        var ownerInfo = await _userService.GetUserIdentity(result.OwnerId!);
 
         return new()
         {
@@ -47,7 +47,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             return null;
         }
 
-        var ownerInfo = await _applicationUserLogic.GetUserIdentity(result.OwnerId!);
+        var ownerInfo = await _userService.GetUserIdentity(result.OwnerId!);
 
         return new()
         {
@@ -61,7 +61,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
     {
         try
         {
-            if (await _applicationUserLogic.FindUser(office.OwnerId) is null)
+            if (await _userService.FindUser(office.OwnerId) is null)
             {
                 return new() { Success = false, Message = "User not found" };
             }
@@ -81,7 +81,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
             _editorialOffices.Create(officeDto);
 
             var result =
-                await _applicationUserLogic.FindAndUpdate(officeDto.OwnerId ?? throw new InvalidOperationException(),
+                await _userService.FindAndUpdate(officeDto.OwnerId ?? throw new InvalidOperationException(),
                     new() { EditorialOfficeId = officeDto.Id.ToString() });
 
             if (!result.Succeeded)
@@ -100,7 +100,7 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
 
     public async Task<BaseResult> Delete(string userId, string officeId)
     {
-        var userUpdated = await _applicationUserLogic.DeleteEditorialOffice(userId);
+        var userUpdated = await _userService.DeleteEditorialOffice(userId);
 
         if (!userUpdated.Succeeded)
         {
@@ -128,5 +128,5 @@ public class EditorialOfficesLogic : IEditorialOfficesLogic
         await _editorialOffices.GetByName(editorialOfficeName) != null;
 
     public async Task<bool> HasEditorialOffice(string userId) =>
-        await _applicationUserLogic.HasEditorialOffice(userId);
+        await _userService.HasEditorialOffice(userId);
 }

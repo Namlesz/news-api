@@ -6,24 +6,24 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using NewsApp.api.Helpers;
+using NewsApp.api.Context;
 using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
-using NewsApp.api.Logic;
 using NewsApp.api.Repositories;
+using NewsApp.api.Services;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace NewsApp.api.Settings;
+namespace NewsApp.api.Helpers;
 
 public static class ServiceExtensions
 {
     public static void ConfigureMongoDbConnection(this WebApplicationBuilder builder)
     {
-        builder.Services.Configure<NewsDatabaseSettings>(builder.Configuration.GetSection("NewsDatabase"));
+        builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("NewsDatabase"));
 
         builder.Services.AddSingleton<IMongoDatabase>(sp =>
         {
-            var databaseSettings = sp.GetRequiredService<IOptions<NewsDatabaseSettings>>().Value;
+            var databaseSettings = sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
             var mongoDbClient = new MongoClient(databaseSettings.ConnectionString);
             var mongoDb = mongoDbClient.GetDatabase(databaseSettings.DatabaseName);
 
@@ -86,14 +86,14 @@ public static class ServiceExtensions
 
     public static void AddLogic(this IServiceCollection services)
     {
-        services.AddScoped<IApplicationUserLogic, ApplicationUserLogic>();
-        services.AddScoped<IEditorialOfficesLogic, EditorialOfficesLogic>();
-        services.AddScoped<IArticleLogic, ArticleLogic>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IOfficeService, OfficeService>();
+        services.AddScoped<IArticleService, ArticleService>();
     }
 
     public static void InitializeRoles(this IServiceProvider service)
     {
-        DataInitializer.SeedRoles(service).Wait();
+        DatabaseSeed.SeedRoles(service).Wait();
     }
 
     public static void ConfigureCors(this IServiceCollection services)

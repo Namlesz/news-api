@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
-using NewsApp.api.Models;
+using NewsApp.api.Context;
 using NewsApp.api.Settings;
 
 namespace NewsApp.api.Helpers;
 
-public static class DataInitializer
+public static class DatabaseSeed
 {
     /// <summary>
     ///   Seed the database with the default app roles

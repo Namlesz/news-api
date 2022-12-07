@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Identity;
+using NewsApp.api.Context;
 using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Models;
-using NewsApp.api.Settings;
 
-namespace NewsApp.api.Logic;
+namespace NewsApp.api.Services;
 
-public class ApplicationUserLogic : IApplicationUserLogic
+public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public ApplicationUserLogic(UserManager<ApplicationUser> userManager)
+    public UserService(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
