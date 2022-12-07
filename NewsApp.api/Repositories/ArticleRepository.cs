@@ -41,5 +41,8 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<ArticleWithContent?> GetArticle(Guid articleId) => 
         await GetCollection<ArticleWithContent>().AsQueryable()
-            .FirstOrDefaultAsync(x => x.Id == articleId);    
+            .FirstOrDefaultAsync(x => x.Id == articleId);
+
+    public async Task<ReplaceOneResult> Update(ArticleWithContent article) =>
+        await GetCollection<ArticleWithContent>().ReplaceOneAsync(x => x.Id == article.Id, article);
 }

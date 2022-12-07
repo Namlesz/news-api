@@ -23,7 +23,7 @@ public interface IArticleService
     /// </summary>
     /// <param name="data">NewArticle model</param>
     /// <returns>BaseResult with success flag and specific message according to result</returns>
-    public Task<BaseResult> AddArticle(NewArticle data);
+    public Task<BaseTypeResult<Article>> AddArticle(NewArticle data);
 
     /// <summary>
     /// Get all articles from office by offset and limit
@@ -40,4 +40,12 @@ public interface IArticleService
     /// <param name="articleId">Article id</param>
     /// <returns>Article with content</returns>
     public Task<ArticleWithContent?> GetArticle(string articleId);
+
+    /// <summary>
+    /// Update article contents
+    /// </summary>
+    /// <param name="id">Article id</param>
+    /// <param name="content">Updated content</param>
+    /// <returns>BaseResult with success true if ok or false with message when error </returns>
+    public Task<BaseResult> UpdateContent(string id, string content);
 }

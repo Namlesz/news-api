@@ -20,35 +20,35 @@ public class ArticleService : IArticleService
 
     public bool IsAcceptedContentType(IFormFile file)
         => CheckExtension(file, _contentType);
-    
+
     public bool IsAcceptedImageType(IFormFile file)
         => CheckExtension(file, _imageTypes);
-    
-    public async Task<BaseResult> AddArticle(NewArticle data)
+
+    public async Task<BaseTypeResult<Article>> AddArticle(NewArticle data)
     {
+        if (!Guid.TryParse(data.AuthorId, out _))
+        {
+            return new BaseTypeResult<Article>  { Success = false, Message = "Invalid article id" };
+        }
+        
         var author = await _userService.FindUser(data.AuthorId);
         if (author is null)
         {
-            return new BaseResult { Success = false, Message = "Author not found" };
+            return new BaseTypeResult<Article> { Success = false, Message = "Author not found" };
         }
 
         if (string.IsNullOrWhiteSpace(author.EditorialOfficeId))
         {
-            return new BaseResult { Success = false, Message = "Author is not assigned to any editorial office" };
+            return new BaseTypeResult<Article> { Success = false, Message = "Author is not assigned to any editorial office" };
         }
 
-        // // Read file content
-        // var readContent = await ReadFile(data.Content);
-        // byte[] contentDataBytes = Encoding.UTF8.GetBytes(readContent);
-        
         // Read image
         var readImage = await ReadFile(data.Image);
         byte[] imageDataBytes = Encoding.UTF8.GetBytes(readImage);
 
-        var article = new ArticleWithContent()
+        var article = new ArticleWithContent
         {
             Title = data.Title,
-            // Content = contentDataBytes,
             AuthorId = data.AuthorId,
             OfficeId = author.EditorialOfficeId,
             Image = imageDataBytes,
@@ -62,10 +62,33 @@ public class ArticleService : IArticleService
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return new BaseResult { Success = false, Message = "Something went wrong" };
+            return new BaseTypeResult<Article> { Success = false, Message = "Something went wrong" };
         }
 
-        return new BaseResult { Success = true, Message = "Article added" };
+        return new BaseTypeResult<Article> { Success = true, Data = article };
+    }
+
+    public async Task<BaseResult> UpdateContent(string id, string content)
+    {
+        if (!Guid.TryParse(id, out var guid))
+        {
+            return new BaseResult { Success = false, Message = "Invalid article id" };
+        }
+
+        var article = await _articleRepository.GetArticle(guid);
+        if (article is null)
+        {
+            return new BaseResult { Success = false, Message = "Article not found" };
+        }
+
+        article.Content = Encoding.UTF8.GetBytes(content);
+        var result = await _articleRepository.Update(article);
+        if (result.ModifiedCount <= 0)
+        {
+            return new BaseResult{ Success = false, Message = "Something went wrong" };
+        }
+        
+        return new BaseResult { Success = true };
     }
 
     //TODO: Add filters logic, return image (check if byte array works) 
@@ -104,7 +127,7 @@ public class ArticleService : IArticleService
         using var reader = new StreamReader(stream);
         return await reader.ReadToEndAsync();
     }
-    
+
     private bool CheckExtension(IFormFile file, List<string> extensions)
     {
         var extension = Path.GetExtension(file.FileName);

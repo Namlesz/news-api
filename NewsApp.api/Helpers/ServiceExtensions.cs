@@ -115,17 +115,30 @@ public static class ServiceExtensions
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new() { Title = "NewsApp.api", Version = "v1" });
-            options.OperationFilter<SecurityRequirementsOperationFilter>();
-            options.AddSecurityDefinition("Bearer", new()
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "bearer"
+                        }
+                    },
+                    new string[] { }
+                }
+            });
+            options.AddSecurityDefinition("bearer", new()
             {
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
+                Scheme = "bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
                 Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
-                              "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
-                              "Example: 'Bearer {{token}}'",
+                              "Enter 'bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                              "Example: 'bearer {{token}}'",
             });
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));

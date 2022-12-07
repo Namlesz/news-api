@@ -26,11 +26,6 @@ public class ArticleController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateArticle([FromForm] NewArticle article)
     {
-        // if (!_articleLogic.IsAcceptedContentType(article.Content))
-        // {
-        //     return BadRequest("Invalid content type");
-        // }
-
         if (!_articleService.IsAcceptedImageType(article.Image))
         {
             return BadRequest("Invalid image type");
@@ -42,7 +37,26 @@ public class ArticleController : ControllerBase
             return BadRequest(result.Message);
         }
 
-        return Ok(result.Message);
+        return Ok(new { id = result.Data!.Id });
+    }
+
+    /// <summary>
+    /// Add/update content to article
+    /// </summary>
+    /// <response code="204">Article created.</response>
+    /// <response code="400">Error message in details</response>
+    /// <response code="500">Ops! Can't update article.</response>
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> UpdateContent([FromForm] string id, [FromForm] string content)
+    {
+        var result = await _articleService.UpdateContent(id, content);
+        if (!result.Success)
+        {
+            return BadRequest(result.Message);
+        }
+
+        return NoContent();
     }
 
     //TODO: Add optional filters
@@ -63,6 +77,7 @@ public class ArticleController : ControllerBase
 
         return Ok(result);
     }
+
     /// <summary>
     /// Get article details (including content)
     /// </summary>

@@ -1,3 +1,4 @@
+using MongoDB.Driver;
 using NewsApp.api.Models;
 
 namespace NewsApp.api.Interfaces.Repositories;
@@ -25,4 +26,11 @@ public interface IArticleRepository
     /// <param name="articleId">Article id (GUID)</param>
     /// <returns>Article with content</returns>
     public Task<ArticleWithContent?> GetArticle(Guid articleId);
+    
+    /// <summary>
+    /// Updates an article in db
+    /// </summary>
+    /// <param name="article">article to update (with id)</param>
+    /// <returns>Replacement result</returns>
+    public Task<ReplaceOneResult> Update(ArticleWithContent article);
 }
