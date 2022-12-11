@@ -48,9 +48,9 @@ public class ArticleController : ControllerBase
     /// <response code="500">Ops! Can't update article.</response>
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> UpdateContent([FromForm] string id, [FromForm] string content)
+    public async Task<IActionResult> UpdateContent([FromBody] ArticleContent articleContent)
     {
-        var result = await _articleService.UpdateContent(id, content);
+        var result = await _articleService.UpdateContent(articleContent.Id, articleContent.Content);
         if (!result.Success)
         {
             return BadRequest(result.Message);

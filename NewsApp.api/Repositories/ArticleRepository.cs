@@ -32,11 +32,10 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<List<ArticleDto>> GetArticles(string officeId, int range, int offset) =>
         await GetCollection<ArticleDto>().AsQueryable()
-            .OrderByDescending(x => x.PublishedAt)
             .Where(x => x.OfficeId == officeId)
             .Skip(offset)
             .Take(range)
-            .Select(x => x)
+            .OrderByDescending(x => x.PublishedAt)
             .ToListAsync();
 
     public async Task<ArticleWithContent?> GetArticle(Guid articleId) => 

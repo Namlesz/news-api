@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations;
 namespace NewsApp.api.Models;
 
 public record Login(
-    [Required(ErrorMessage = "E-mail is required")]
+    [Required]
     string Email,
-    [Required(ErrorMessage = "Password is required")]
+    [Required]
     string Password
 );
 
 public record PasswordChange(
     [EmailAddress]
-    [Required(ErrorMessage = "E-mail is required")]
+    [Required]
     string Email,
-    [Required(ErrorMessage = "Password is required")]
+    [Required]
     string Password,
-    [Required(ErrorMessage = "Token is required")]
+    [Required]
     string Token
 );

@@ -17,13 +17,13 @@ public class UserInfo
 
 public record NewUser
 (
-    [Required(ErrorMessage = "Imię jest wymagane")]
+    [Required]
     string Name,
-    [Required(ErrorMessage = "Nazwisko jest wymagane")]
+    [Required]
     string Surname,
     [EmailAddress]
-    [Required(ErrorMessage = "Email jest wymagany")]
+    [Required]
     string Email,
-    [Required(ErrorMessage = "Hasło jest wymagane")]
+    [Required]
     string Password
 );

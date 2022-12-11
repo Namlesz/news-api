@@ -9,7 +9,7 @@ public class ArticleService : IArticleService
 {
     private readonly IArticleRepository _articleRepository;
     private readonly IUserService _userService;
-    private readonly List<string> _imageTypes = new() { ".jpeg", ".png" };
+    private readonly List<string> _imageTypes = new() { ".jpeg", ".png", ".jpg" };
     private readonly List<string> _contentType = new() { ".html" };
 
     public ArticleService(IArticleRepository articleRepository, IUserService userService)
@@ -28,9 +28,9 @@ public class ArticleService : IArticleService
     {
         if (!Guid.TryParse(data.AuthorId, out _))
         {
-            return new BaseTypeResult<Article>  { Success = false, Message = "Invalid article id" };
+            return new BaseTypeResult<Article> { Success = false, Message = "Invalid article id" };
         }
-        
+
         var author = await _userService.FindUser(data.AuthorId);
         if (author is null)
         {
@@ -39,7 +39,8 @@ public class ArticleService : IArticleService
 
         if (string.IsNullOrWhiteSpace(author.EditorialOfficeId))
         {
-            return new BaseTypeResult<Article> { Success = false, Message = "Author is not assigned to any editorial office" };
+            return new BaseTypeResult<Article>
+                { Success = false, Message = "Author is not assigned to any editorial office" };
         }
 
         // Read image
@@ -85,9 +86,9 @@ public class ArticleService : IArticleService
         var result = await _articleRepository.Update(article);
         if (result.ModifiedCount <= 0)
         {
-            return new BaseResult{ Success = false, Message = "Something went wrong" };
+            return new BaseResult { Success = false, Message = "Something went wrong" };
         }
-        
+
         return new BaseResult { Success = true };
     }
 

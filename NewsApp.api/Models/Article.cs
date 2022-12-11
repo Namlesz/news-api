@@ -28,10 +28,17 @@ public class ArticleWithContent : ArticleDto
 }
 
 public record NewArticle(
-    [Required(ErrorMessage = "Title is required")]
+    [Required]
     string Title,
-    [Required(ErrorMessage = "AuthorId is required")]
+    [Required]
     string AuthorId,
-    [Required(ErrorMessage = "Image is required")]
+    [Required]
     IFormFile Image
+);
+
+public record ArticleContent(
+    [Required]
+    string Id,
+    [Required]
+    string Content
 );

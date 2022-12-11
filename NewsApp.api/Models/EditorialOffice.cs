@@ -23,9 +23,9 @@ public class EditorialOfficeDto : EditorialOffice
 }
 
 public record NewOffice(
-    [Required(ErrorMessage = "Name is required")]
+    [Required(ErrorMessage = "Office name is required")]
     string Name,
-    [Required(ErrorMessage = "Town is required")]
+    [Required]
     string Town,
-    [Required(ErrorMessage = "Owner id is required")]
+    [Required]
     string OwnerId);
