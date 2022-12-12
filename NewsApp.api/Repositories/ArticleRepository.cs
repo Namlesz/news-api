@@ -44,4 +44,7 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<ReplaceOneResult> Update(ArticleWithContent article) =>
         await GetCollection<ArticleWithContent>().ReplaceOneAsync(x => x.Id == article.Id, article);
+    
+    public async Task<ArticleThumbnail?> GetThumbnail(Guid articleId) =>
+        await GetCollection<ArticleThumbnail>().Find(x => x.Id == articleId).FirstOrDefaultAsync();
 }

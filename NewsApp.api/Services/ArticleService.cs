@@ -47,7 +47,7 @@ public class ArticleService : IArticleService
         var readImage = await ReadFile(data.Image);
         byte[] imageDataBytes = Encoding.UTF8.GetBytes(readImage);
 
-        var article = new ArticleWithContent
+        var article = new ArticleDto()
         {
             Title = data.Title,
             AuthorId = data.AuthorId,
@@ -82,7 +82,7 @@ public class ArticleService : IArticleService
             return new BaseResult { Success = false, Message = "Article not found" };
         }
 
-        article.Content = Encoding.UTF8.GetBytes(content);
+        article.Content = content;
         var result = await _articleRepository.Update(article);
         if (result.ModifiedCount <= 0)
         {
@@ -105,7 +105,6 @@ public class ArticleService : IArticleService
         {
             Title = x.Title,
             PublishedAt = x.PublishedAt,
-            Image = x.Image,
             Id = x.Id
         }).ToList();
 
@@ -119,7 +118,29 @@ public class ArticleService : IArticleService
             return null;
         }
 
-        return await _articleRepository.GetArticle(guid);
+        var article = await _articleRepository.GetArticle(guid);
+        if (article is null)
+        {
+            return null;
+        }
+
+        return article;
+    }
+    
+    public async Task<string?> GetArticleThumbnail(string articleId)
+    {
+        if (!Guid.TryParse(articleId, out var guid))
+        {
+            return null;
+        }
+
+        var thumbnail = await _articleRepository.GetThumbnail(guid);
+        if (thumbnail is null)
+        {
+            return null;
+        }
+        
+        return Convert.ToBase64String(thumbnail.Image);
     }
 
     private async Task<string> ReadFile(IFormFile file)

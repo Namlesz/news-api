@@ -48,4 +48,6 @@ public interface IArticleService
     /// <param name="content">Updated content</param>
     /// <returns>BaseResult with success true if ok or false with message when error </returns>
     public Task<BaseResult> UpdateContent(string id, string content);
+
+    public Task<string?> GetArticleThumbnail(string id);
 }

@@ -33,4 +33,6 @@ public interface IArticleRepository
     /// <param name="article">article to update (with id)</param>
     /// <returns>Replacement result</returns>
     public Task<ReplaceOneResult> Update(ArticleWithContent article);
+    
+    public Task<ArticleThumbnail?> GetThumbnail(Guid articleId);
 }
