@@ -15,7 +15,7 @@ public class Article
 public class ArticleImage : Article
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public byte[]? Image { get; set; }
+    public string? Image { get; set; }
 }
 
 [BsonIgnoreExtraElements]
@@ -35,7 +35,7 @@ public class ArticleWithContent : ArticleDto
 
 [BsonIgnoreExtraElements]
 [CollectionName("Articles")]
-public record ArticleThumbnail(Guid Id, byte[] Image);
+public record ArticleThumbnail(Guid Id, string Image);
 
 public record NewArticle(
     [Required] string Title,

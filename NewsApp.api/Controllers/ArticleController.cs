@@ -92,12 +92,9 @@ public class ArticleController : ControllerBase
             return NotFound();
         }
 
-        var thumbnail = Convert.ToBase64String(result.Image!);
-        result.Image = null;
-
-        return Ok(new { Article = result, thumbnail });
+        return Ok(result);
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetThumbnail([FromQuery] string articleId)
     {

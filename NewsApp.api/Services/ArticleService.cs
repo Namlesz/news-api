@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Text;
 using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
@@ -45,14 +46,13 @@ public class ArticleService : IArticleService
 
         // Read image
         var readImage = await ReadFile(data.Image);
-        byte[] imageDataBytes = Encoding.UTF8.GetBytes(readImage);
 
         var article = new ArticleDto()
         {
             Title = data.Title,
             AuthorId = data.AuthorId,
             OfficeId = author.EditorialOfficeId,
-            Image = imageDataBytes,
+            Image = readImage,
             PublishedAt = DateTime.Now
         };
 
@@ -126,7 +126,7 @@ public class ArticleService : IArticleService
 
         return article;
     }
-    
+
     public async Task<string?> GetArticleThumbnail(string articleId)
     {
         if (!Guid.TryParse(articleId, out var guid))
@@ -139,15 +139,22 @@ public class ArticleService : IArticleService
         {
             return null;
         }
-        
-        return Convert.ToBase64String(thumbnail.Image);
+
+        return thumbnail.Image;
     }
 
     private async Task<string> ReadFile(IFormFile file)
     {
-        await using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-        return await reader.ReadToEndAsync();
+        using (var memoryStream = new MemoryStream())
+        {
+            await file.CopyToAsync(memoryStream);
+            using var img = Image.FromStream(memoryStream);
+            using var m = new MemoryStream();
+            img.Save(m, img.RawFormat);
+            byte[] imageBytes = m.ToArray();
+            string base64String = Convert.ToBase64String(imageBytes);
+            return base64String;
+        }
     }
 
     private bool CheckExtension(IFormFile file, List<string> extensions)
