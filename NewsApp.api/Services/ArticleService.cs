@@ -143,19 +143,37 @@ public class ArticleService : IArticleService
         return thumbnail.Image;
     }
 
-    private async Task<string> ReadFile(IFormFile file)
+    public async Task<BaseResult> DeleteArticle(string articleId)
     {
-        using (var memoryStream = new MemoryStream())
+        if (!Guid.TryParse(articleId, out var guid))
         {
-            await file.CopyToAsync(memoryStream);
-            using var img = Image.FromStream(memoryStream);
-            using var m = new MemoryStream();
-            img.Save(m, img.RawFormat);
-            byte[] imageBytes = m.ToArray();
-            string base64String = Convert.ToBase64String(imageBytes);
-            return base64String;
+            return new() { Success = false, Message = "Wrong article id format" };
+        }
+
+        try
+        {
+            var result = await _articleRepository.Delete(guid);
+            return new() { Success = result.DeletedCount > 0 };
+        }
+        catch (Exception e)
+        {
+            return new() { Success = false, Message = e.Message };
         }
     }
+
+#pragma warning disable CA1416
+    private async Task<string> ReadFile(IFormFile file)
+    {
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        using var img = Image.FromStream(memoryStream);
+        using var m = new MemoryStream();
+        img.Save(m, img.RawFormat);
+        var imageBytes = m.ToArray();
+        string base64String = Convert.ToBase64String(imageBytes);
+        return base64String;
+    }
+#pragma warning restore CA1416
 
     private bool CheckExtension(IFormFile file, List<string> extensions)
     {

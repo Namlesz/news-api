@@ -76,7 +76,7 @@ public class EditorialOfficeController : ControllerBase
     /// <summary>
     /// Get office info by name
     /// </summary>
-    /// <response code="200">Deleted.</response>
+    /// <response code="204">Deleted.</response>
     /// <response code="404">Not found an office/user don't have office.</response>
     /// <response code="500">Ops! Problem when deleting office.</response>
     [HttpDelete]
@@ -95,6 +95,6 @@ public class EditorialOfficeController : ControllerBase
         if (!result.Success)
             return Problem(result.Message);
 
-        return Ok();
+        return NoContent();
     }
 }

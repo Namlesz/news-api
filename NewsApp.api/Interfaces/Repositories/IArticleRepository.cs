@@ -34,5 +34,17 @@ public interface IArticleRepository
     /// <returns>Replacement result</returns>
     public Task<ReplaceOneResult> Update(ArticleWithContent article);
     
+    /// <summary>
+    /// Get Thumbnail of an article
+    /// </summary>
+    /// <param name="articleId">article id</param>
+    /// <returns>Image string from db</returns>
     public Task<ArticleThumbnail?> GetThumbnail(Guid articleId);
+    
+    /// <summary>
+    /// Deletes an article from db
+    /// </summary>
+    /// <param name="articleId">article id</param>
+    /// <returns>DeleteResult from mongodb.driver</returns>
+    public Task<DeleteResult> Delete(Guid articleId);
 }

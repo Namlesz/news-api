@@ -46,7 +46,7 @@ public class ArticleController : ControllerBase
     /// <response code="204">Article created.</response>
     /// <response code="400">Error message in details</response>
     /// <response code="500">Ops! Can't update article.</response>
-    [HttpPost]
+    [HttpPut]
     [Authorize]
     public async Task<IActionResult> UpdateContent([FromBody] ArticleContent articleContent)
     {
@@ -95,6 +95,13 @@ public class ArticleController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Get article Thumbnail image
+    /// </summary>
+    /// <param name="articleId">Id of article</param>
+    /// <returns></returns>
+    /// <response code="200">Return image in base64.</response>
+    /// <response code="404">Not found an thumbnail.</response>
     [HttpGet]
     public async Task<IActionResult> GetThumbnail([FromQuery] string articleId)
     {
@@ -105,5 +112,25 @@ public class ArticleController : ControllerBase
         }
 
         return Ok(new { Thumbnail = result });
+    }
+
+    /// <summary>
+    /// Deletes article from db
+    /// </summary>
+    /// <param name="articleId">Id of article</param>
+    /// <returns></returns>
+    /// <response code="204">Article successfully deleted.</response>
+    /// <response code="404">Any issue when deleting.</response>
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> DeleteArticle([FromQuery] string articleId)
+    {
+        var result = await _articleService.DeleteArticle(articleId);
+        if (!result.Success)
+        {
+            return NotFound(result.Message);
+        }
+
+        return NoContent();
     }
 }

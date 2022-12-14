@@ -32,14 +32,12 @@ public class EditorialOfficesRepository : IEditorialOfficesRepository
 
     public async Task<EditorialOfficeDto?> GetById(Guid id)
         => await _editorialOffices.Find(office => office.Id == id).FirstOrDefaultAsync();
-    
+
     public async void Create(EditorialOfficeDto officeDto)
     {
         await _editorialOffices.InsertOneAsync(officeDto);
     }
 
-    public async void DeleteById(Guid id)
-    {
+    public async Task<DeleteResult> DeleteById(Guid id) =>
         await _editorialOffices.DeleteOneAsync(e => e.Id == id);
-    }
 }

@@ -68,9 +68,8 @@ public class AuthenticateController : ControllerBase
         return Ok(new
         {
             userId = user.Id,
-            token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo,
-            editorialOfficeId = user.EditorialOfficeId
+            editorialOfficeId = user.EditorialOfficeId,
+            token = new JwtSecurityTokenHandler().WriteToken(token)
         });
     }
 

@@ -49,5 +49,17 @@ public interface IArticleService
     /// <returns>BaseResult with success true if ok or false with message when error </returns>
     public Task<BaseResult> UpdateContent(string id, string content);
 
+    /// <summary>
+    /// Gets article thumbnail from database in base64 format
+    /// </summary>
+    /// <param name="id">id of article</param>
+    /// <returns>Base64 string</returns>
     public Task<string?> GetArticleThumbnail(string id);
+    
+    /// <summary>
+    /// Deletes article from database
+    /// </summary>
+    /// <param name="articleId">id of article</param>
+    /// <returns>Flag if article is deleted or not</returns>
+    public Task<BaseResult> DeleteArticle(string articleId);
 }

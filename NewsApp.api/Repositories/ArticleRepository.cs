@@ -38,13 +38,16 @@ public class ArticleRepository : IArticleRepository
             .OrderByDescending(x => x.PublishedAt)
             .ToListAsync();
 
-    public async Task<ArticleWithContent?> GetArticle(Guid articleId) => 
+    public async Task<ArticleWithContent?> GetArticle(Guid articleId) =>
         await GetCollection<ArticleWithContent>().AsQueryable()
             .FirstOrDefaultAsync(x => x.Id == articleId);
 
     public async Task<ReplaceOneResult> Update(ArticleWithContent article) =>
         await GetCollection<ArticleWithContent>().ReplaceOneAsync(x => x.Id == article.Id, article);
-    
+
     public async Task<ArticleThumbnail?> GetThumbnail(Guid articleId) =>
         await GetCollection<ArticleThumbnail>().Find(x => x.Id == articleId).FirstOrDefaultAsync();
+
+    public Task<DeleteResult> Delete(Guid articleId) =>
+        GetCollection<Article>().DeleteOneAsync(x => x.Id == articleId);
 }

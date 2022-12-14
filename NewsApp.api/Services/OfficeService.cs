@@ -86,7 +86,7 @@ public class OfficeService : IOfficeService
 
             if (!result.Succeeded)
             {
-                _editorialOffices.DeleteById(officeDto.Id);
+                await _editorialOffices.DeleteById(officeDto.Id);
                 return new() { Success = false, Message = "Error while updating user info" };
             }
 
@@ -114,14 +114,13 @@ public class OfficeService : IOfficeService
 
         try
         {
-            _editorialOffices.DeleteById(guid);
+            var deleteResult = await _editorialOffices.DeleteById(guid);
+            return new BaseResult { Success = deleteResult.DeletedCount > 0 };
         }
         catch (Exception)
         {
             return new() { Success = false, Message = "Something went wrong" };
         }
-
-        return new() { Success = true };
     }
 
     public async Task<bool> IsExists(string editorialOfficeName) =>
