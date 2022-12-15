@@ -47,4 +47,11 @@ public interface IArticleRepository
     /// <param name="articleId">article id</param>
     /// <returns>DeleteResult from mongodb.driver</returns>
     public Task<DeleteResult> Delete(Guid articleId);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    public Task<int> GetArticleCounts(Guid result);
 }

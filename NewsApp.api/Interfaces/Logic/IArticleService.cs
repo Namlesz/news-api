@@ -10,7 +10,7 @@ public interface IArticleService
     /// <param name="file">IFormFile to check</param>
     /// <returns></returns>
     public bool IsAcceptedContentType(IFormFile file);
-    
+
     /// <summary>
     /// Validate image type
     /// </summary>
@@ -55,11 +55,18 @@ public interface IArticleService
     /// <param name="id">id of article</param>
     /// <returns>Base64 string</returns>
     public Task<string?> GetArticleThumbnail(string id);
-    
+
     /// <summary>
     /// Deletes article from database
     /// </summary>
     /// <param name="articleId">id of article</param>
     /// <returns>Flag if article is deleted or not</returns>
     public Task<BaseResult> DeleteArticle(string articleId);
+
+    /// <summary>
+    /// Get count of all articles in office
+    /// </summary>
+    /// <param name="officeId">Office id</param>
+    /// <returns>Number of articles in the office</returns>
+    public Task<int> GetArticleCounts(string officeId);
 }

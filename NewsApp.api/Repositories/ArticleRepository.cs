@@ -50,4 +50,7 @@ public class ArticleRepository : IArticleRepository
 
     public Task<DeleteResult> Delete(Guid articleId) =>
         GetCollection<Article>().DeleteOneAsync(x => x.Id == articleId);
+
+    public Task<int> GetArticleCounts(Guid result) =>
+        GetCollection<ArticleDto>().AsQueryable().CountAsync(x => x.OfficeId == result.ToString());
 }

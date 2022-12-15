@@ -133,4 +133,16 @@ public class ArticleController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetArticleCounts(string officeId)
+    {
+        var result = await _articleService.GetArticleCounts(officeId);
+        if (result is 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(new { Count = result });
+    }
 }

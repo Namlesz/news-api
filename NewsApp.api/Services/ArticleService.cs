@@ -161,6 +161,16 @@ public class ArticleService : IArticleService
         }
     }
 
+    public async Task<int> GetArticleCounts(string officeId)
+    {
+        if (!Guid.TryParse(officeId, out var guid))
+        {
+            return 0;
+        }
+        
+        return await _articleRepository.GetArticleCounts(guid);
+    }
+
 #pragma warning disable CA1416
     private async Task<string> ReadFile(IFormFile file)
     {
