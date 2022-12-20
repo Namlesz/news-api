@@ -16,7 +16,7 @@ builder.Services.ConfigureCors();
 
 var app = builder.Build();
 
-app.Services.InitializeRoles();
+app.InitializeRoles();
 
 app.UseSwagger();
 app.ConfigureSwaggerUI();

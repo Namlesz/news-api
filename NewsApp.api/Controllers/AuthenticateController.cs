@@ -30,7 +30,7 @@ public class AuthenticateController : ControllerBase
         _roleManager = roleManager;
         _configuration = configuration;
     }
-    
+
     /// <summary>
     /// Get access token
     /// </summary>
@@ -95,7 +95,7 @@ public class AuthenticateController : ControllerBase
                 return NotFound("Owner not found");
             if (owner.EditorialOfficeId is null)
                 return NotFound("Owner has no editorial office");
-            
+
             editorialOfficeId = owner.EditorialOfficeId;
         }
         catch
@@ -108,10 +108,10 @@ public class AuthenticateController : ControllerBase
             return Problem("User creation failed! Please check user details and try again.");
 
         if (await _roleManager.RoleExistsAsync(UserRoles.Editor))
-        { 
+        {
             await _userManager.AddToRoleAsync(user, UserRoles.Editor);
         }
-        
+
         if (!await SendConfirmationEmail(user))
             return Problem("Confirmation email failed to send.");
 
@@ -129,7 +129,7 @@ public class AuthenticateController : ControllerBase
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
             return Conflict("User already exists!");
-        
+
         var user = await CreateUser(data);
         if (user is null)
             return Problem("User creation failed! Please check user details and try again.");
@@ -183,7 +183,7 @@ public class AuthenticateController : ControllerBase
 
         var token = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
         var passwordResetLink = $"https://pifront.netlify.app/account/change/{token}";
-        EmailService emailService = new EmailService();
+        var emailService = new EmailService();
 
         if (!emailService.SendResetPasswordEmail(email, passwordResetLink))
             return Problem("Unable to send password reset email");
@@ -207,7 +207,7 @@ public class AuthenticateController : ControllerBase
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded)
             return Problem("Email confirmation failed!");
-        
+
         return Redirect("https://pifront.netlify.app/account/activated");
     }
 
@@ -216,7 +216,8 @@ public class AuthenticateController : ControllerBase
     private async Task<bool> SendConfirmationEmail(ApplicationUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var confirmationLink = Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+        var confirmationLink =
+            Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
         EmailService emailService = new EmailService();
 
@@ -241,7 +242,9 @@ public class AuthenticateController : ControllerBase
 
     private JwtSecurityToken GetToken(List<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"] ?? throw new MissingFieldException("Can't load encode key.")));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"] ??
+                                                                             throw new MissingFieldException(
+                                                                                 "Can't load encode key.")));
 
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],

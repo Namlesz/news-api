@@ -11,7 +11,6 @@ using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Repositories;
 using NewsApp.api.Services;
-using Swashbuckle.AspNetCore.Filters;
 
 namespace NewsApp.api.Helpers;
 
@@ -91,9 +90,9 @@ public static class ServiceExtensions
         services.AddScoped<IArticleService, ArticleService>();
     }
 
-    public static void InitializeRoles(this IServiceProvider service)
+    public static void InitializeRoles(this WebApplication app)
     {
-        DatabaseSeed.SeedRoles(service).Wait();
+        DatabaseSeed.SeedRoles(app).Wait();
     }
 
     public static void ConfigureCors(this IServiceCollection services)

@@ -9,10 +9,11 @@ public static class DatabaseSeed
     /// <summary>
     ///   Seed the database with the default app roles
     /// </summary>
-    /// <param name="serviceProvider"></param>
-    public static async Task SeedRoles(IServiceProvider serviceProvider)
+    /// <param name="app"></param>
+    public static async Task SeedRoles(WebApplication app)
     {
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+        using var scope = app.Services.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
         foreach (var role in Enum.GetNames(typeof(Roles)))
         {
             if (!await roleManager.RoleExistsAsync(role))
