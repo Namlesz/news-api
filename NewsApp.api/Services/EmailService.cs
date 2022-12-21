@@ -46,7 +46,7 @@ public class EmailService
         }
         catch (Exception ex)
         {
-            bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
             if (isDevelopment)
                 Console.WriteLine(ex);
         }

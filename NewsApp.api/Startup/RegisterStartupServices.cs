@@ -12,14 +12,29 @@ using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Repositories;
 using NewsApp.api.Services;
 
-namespace NewsApp.api.Helpers;
+namespace NewsApp.api.Startup;
 
-public static class ServiceExtensions
+public static class RegisterStartupServices
 {
-    public static void ConfigureMongoDbConnection(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
+    {
+        builder.ConfigureMongoDbConnection();
+        builder.AddMicrosoftIdentity();
+        builder.AddJwtBearerAuthentication();
+
+        builder.Services.ConfigureMsIdentity();
+        builder.Services.AddRepositories();
+        builder.Services.AddLogic();
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.ConfigureSwagger();
+        builder.Services.ConfigureCors();
+        return builder;
+    }
+
+    private static void ConfigureMongoDbConnection(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("NewsDatabase"));
-
         builder.Services.AddSingleton<IMongoDatabase>(sp =>
         {
             var databaseSettings = sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
@@ -30,7 +45,7 @@ public static class ServiceExtensions
         });
     }
 
-    public static void AddMicrosoftIdentity(this WebApplicationBuilder builder)
+    private static void AddMicrosoftIdentity(this WebApplicationBuilder builder)
     {
         builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>
@@ -40,8 +55,8 @@ public static class ServiceExtensions
             )
             .AddDefaultTokenProviders();
     }
-
-    public static void AddJwtBearerAuthentication(this WebApplicationBuilder builder)
+    
+    private static void AddJwtBearerAuthentication(this WebApplicationBuilder builder)
     {
         builder.Services.AddAuthentication(options =>
             {
@@ -67,7 +82,7 @@ public static class ServiceExtensions
             });
     }
 
-    public static void ConfigureMsIdentity(this IServiceCollection services)
+    private static void ConfigureMsIdentity(this IServiceCollection services)
     {
         services.Configure<IdentityOptions>(opts =>
         {
@@ -75,27 +90,8 @@ public static class ServiceExtensions
             opts.SignIn.RequireConfirmedEmail = true;
         });
     }
-
-    public static void AddRepositories(this IServiceCollection services)
-    {
-        services.AddSingleton<IUsersRepository, UsersRepository>();
-        services.AddSingleton<IEditorialOfficesRepository, EditorialOfficesRepository>();
-        services.AddSingleton<IArticleRepository, ArticleRepository>();
-    }
-
-    public static void AddLogic(this IServiceCollection services)
-    {
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IOfficeService, OfficeService>();
-        services.AddScoped<IArticleService, ArticleService>();
-    }
-
-    public static void InitializeRoles(this WebApplication app)
-    {
-        DatabaseSeed.SeedRoles(app).Wait();
-    }
-
-    public static void ConfigureCors(this IServiceCollection services)
+    
+    private static void ConfigureCors(this IServiceCollection services)
     {
         services.AddCors(options =>
         {
@@ -109,7 +105,21 @@ public static class ServiceExtensions
         });
     }
 
-    public static void ConfigureSwagger(this IServiceCollection services)
+    private static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddSingleton<IUsersRepository, UsersRepository>();
+        services.AddSingleton<IEditorialOfficesRepository, EditorialOfficesRepository>();
+        services.AddSingleton<IArticleRepository, ArticleRepository>();
+    }
+
+    private static void AddLogic(this IServiceCollection services)
+    {
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IOfficeService, OfficeService>();
+        services.AddScoped<IArticleService, ArticleService>();
+    }
+
+    private static void ConfigureSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {
@@ -141,16 +151,6 @@ public static class ServiceExtensions
             });
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        });
-    }
-
-    // ReSharper disable once InconsistentNaming
-    public static void ConfigureSwaggerUI(this WebApplication app)
-    {
-        app.UseSwaggerUI(options =>
-        {
-            options.RoutePrefix = "";
-            options.SwaggerEndpoint("swagger/v1/swagger.json", "NewsApp.api v1");
         });
     }
 }
