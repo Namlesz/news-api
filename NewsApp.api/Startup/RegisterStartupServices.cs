@@ -123,6 +123,7 @@ public static class RegisterStartupServices
     {
         services.AddSwaggerGen(options =>
         {
+            options.EnableAnnotations();
             options.SwaggerDoc("v1", new() { Title = "NewsApp.api", Version = "v1" });
             options.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {

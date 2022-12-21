@@ -4,6 +4,7 @@ using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Models;
 using NewsApp.api.Settings;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace NewsApp.api.Controllers;
 
@@ -20,14 +21,12 @@ public class UserController : ControllerBase
         _usersCollection = usersCollection;
     }
 
-    /// <summary>
-    /// Get all users from specified office
-    /// </summary>
-    /// <response code="200">Return list of users.</response>
-    /// <response code="400">User doesn't have an office.</response>
-    /// <response code="404">User id not found.</response>
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
+    [SwaggerOperation("Get all users from specified office")]
+    [SwaggerResponse(StatusCodes.Status200OK, type: typeof(List<UserInfo>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "User doesn't have an office")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User id not found.")]
     public async Task<IActionResult> GetAllOfficeUsers([FromQuery] string userId)
     {
         var user = await _userService.FindUser(userId);
@@ -43,15 +42,13 @@ public class UserController : ControllerBase
 
         return Ok(await _usersCollection.GetAllOfficeUsers(user.EditorialOfficeId));
     }
-    
-    /// <summary>
-    /// Get all users from specified office
-    /// </summary>
-    /// <response code="200">Return user info.</response>
-    /// <response code="404">User not found.</response>
-    /// <response code="500">Invalid user id format .</response>
+
     [HttpGet]
     [Authorize]
+    [SwaggerOperation("Get user info")]
+    [SwaggerResponse(StatusCodes.Status200OK, type: typeof(UserInfo))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User not found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Invalid user id format.")]
     public async Task<IActionResult> GetUserInfo([FromQuery] string id)
     {
         if (!Guid.TryParse(id, out var guid))
@@ -68,13 +65,11 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    /// <summary>
-    /// Update user data in database
-    /// </summary>
-    /// <response code="200">Updated.</response>
-    /// <response code="500">Ops! Can't update user.</response>
     [HttpPut]
     [Authorize]
+    [SwaggerOperation("Update user data in database")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Updated.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't update user.")]
     public async Task<IActionResult> UpdateUserInfo([FromQuery] string id, [FromBody] UserInfo data)
     {
         var result = await _userService.FindAndUpdate(id, data);

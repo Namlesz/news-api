@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace NewsApp.api.Controllers;
 
@@ -16,14 +17,11 @@ public class ArticleController : ControllerBase
         _articleService = articleService;
     }
 
-    /// <summary>
-    /// Save article to database
-    /// </summary>
-    /// <response code="200">Article created.</response>
-    /// <response code="400">Wrong content/image type.</response>
-    /// <response code="500">Ops! Can't create article.</response>
     [HttpPost]
     [Authorize]
+    [SwaggerOperation("Save article to database")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Article created.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Wrong content/image type.")]
     public async Task<IActionResult> CreateArticle([FromForm] NewArticle article)
     {
         if (!_articleService.IsAcceptedImageType(article.Image))
@@ -40,14 +38,11 @@ public class ArticleController : ControllerBase
         return Ok(new { id = result.Data!.Id });
     }
 
-    /// <summary>
-    /// Add/update content to article
-    /// </summary>
-    /// <response code="204">Article created.</response>
-    /// <response code="400">Error message in details</response>
-    /// <response code="500">Ops! Can't update article.</response>
     [HttpPut]
     [Authorize]
+    [SwaggerOperation("Save article to database")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Article updated.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Can't update")]
     public async Task<IActionResult> UpdateContent([FromBody] ArticleContent articleContent)
     {
         var result = await _articleService.UpdateContent(articleContent.Id, articleContent.Content);
@@ -59,13 +54,10 @@ public class ArticleController : ControllerBase
         return NoContent();
     }
 
-    //TODO: Add optional filters
-    /// <summary>
-    /// Get all articles from office
-    /// </summary>
-    /// <response code="200">Return list of articles.</response>
-    /// <response code="404">Not found an article.</response>
     [HttpGet]
+    [SwaggerOperation("Get all articles by office id")]
+    [SwaggerResponse(StatusCodes.Status200OK, type: typeof(List<Article>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetArticles([FromQuery] string officeId, [FromQuery] int range = 10,
         [FromQuery] int offset = 0)
     {
@@ -78,12 +70,10 @@ public class ArticleController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get article details (including content)
-    /// </summary>
-    /// <response code="200">Return article.</response>
-    /// <response code="404">Not found article.</response>
     [HttpGet]
+    [SwaggerOperation("Return article with content")]
+    [SwaggerResponse(StatusCodes.Status200OK, type: typeof(ArticleWithContent))]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetArticle([FromQuery] string articleId)
     {
         var result = await _articleService.GetArticle(articleId);
@@ -95,14 +85,10 @@ public class ArticleController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get article Thumbnail image
-    /// </summary>
-    /// <param name="articleId">Id of article</param>
-    /// <returns></returns>
-    /// <response code="200">Return image in base64.</response>
-    /// <response code="404">Not found an thumbnail.</response>
     [HttpGet]
+    [SwaggerOperation("Get article Thumbnail image")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Return image in base64.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetThumbnail([FromQuery] string articleId)
     {
         var result = await _articleService.GetArticleThumbnail(articleId);
@@ -114,15 +100,11 @@ public class ArticleController : ControllerBase
         return Ok(new { Thumbnail = result });
     }
 
-    /// <summary>
-    /// Deletes article from db
-    /// </summary>
-    /// <param name="articleId">Id of article</param>
-    /// <returns></returns>
-    /// <response code="204">Article successfully deleted.</response>
-    /// <response code="404">Any issue when deleting.</response>
     [HttpDelete]
     [Authorize]
+    [SwaggerOperation("Deletes article from db")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Article deleted.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteArticle([FromQuery] string articleId)
     {
         var result = await _articleService.DeleteArticle(articleId);
@@ -135,6 +117,9 @@ public class ArticleController : ControllerBase
     }
 
     [HttpGet]
+    [SwaggerOperation("Get number of articles in office")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Return Count:int")]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetArticleCounts(string officeId)
     {
         var result = await _articleService.GetArticleCounts(officeId);

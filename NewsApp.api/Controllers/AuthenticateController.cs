@@ -10,6 +10,7 @@ using NewsApp.api.Context;
 using NewsApp.api.Models;
 using NewsApp.api.Services;
 using NewsApp.api.Settings;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace NewsApp.api.Controllers;
 
@@ -31,14 +32,11 @@ public class AuthenticateController : ControllerBase
         _configuration = configuration;
     }
 
-    /// <summary>
-    /// Get access token
-    /// </summary>
-    /// <response code="200">Return user and access token.</response>
-    /// <response code="401">Email not confirmed.</response>
-    /// <response code="404">User not found.</response>
-    /// <response code="500">Ops! Uncaught error.</response>
     [HttpPost]
+    [SwaggerOperation("Get access token")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Return user and access token.")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Email not confirmed")]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Login([FromBody] Login login)
     {
         var user = await _userManager.FindByEmailAsync(login.Email);
@@ -73,15 +71,13 @@ public class AuthenticateController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// Create editor for redaction
-    /// </summary>
-    /// <response code="200">User created.</response>
-    /// <response code="404">Not found owner/ Owner office is missing.</response>
-    /// <response code="409">User already exists.</response>
-    /// <response code="500">Ops! Can't create user.</response>
     [HttpPost]
     [Authorize(Roles = UserRoles.Admin)]
+    [SwaggerOperation("Create editor for redaction")]
+    [SwaggerResponse(StatusCodes.Status200OK, "User created.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not found owner/ Owner office is missing.")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "User already exists")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't create user.")]
     public async Task<IActionResult> RegisterEditor([FromQuery] string ownerId, [FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
@@ -118,13 +114,11 @@ public class AuthenticateController : ControllerBase
         return Ok("User created successfully!");
     }
 
-    /// <summary>
-    /// Create new account
-    /// </summary>
-    /// <response code="200">User created.</response>
-    /// <response code="409">User already exists.</response>
-    /// <response code="500">Ops! Can't create user.</response>
     [HttpPost]
+    [SwaggerOperation("Create new account")]
+    [SwaggerResponse(StatusCodes.Status200OK, "User created.")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "User already exists")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't create user.")]
     public async Task<IActionResult> RegisterAdmin([FromBody] NewUser data)
     {
         if (await _userManager.FindByEmailAsync(data.Email) != null)
@@ -148,13 +142,11 @@ public class AuthenticateController : ControllerBase
         return Ok("User created successfully! Pleas confirm your email.");
     }
 
-    /// <summary>
-    /// Change password for account
-    /// </summary>
-    /// <response code="200">Password changed.</response>
-    /// <response code="404">User not found.</response>
-    /// <response code="500">Ops! Can't change password.</response>
     [HttpPost]
+    [SwaggerOperation("Change password for account")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Password changed.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't change password.")]
     public async Task<IActionResult> ChangePassword([FromBody] PasswordChange data)
     {
         var user = await _userManager.FindByEmailAsync(data.Email);
@@ -168,13 +160,11 @@ public class AuthenticateController : ControllerBase
         return Ok("Password changed successfully");
     }
 
-    /// <summary>
-    /// Send reset link to email
-    /// </summary>
-    /// <response code="200">Email sent.</response>
-    /// <response code="404">User not found.</response>
-    /// <response code="500">Ops! Can't send link.</response>
     [HttpGet]
+    [SwaggerOperation("Send reset link to email")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Email sent.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User not found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't send link.")]
     public async Task<IActionResult> ResetPassword([FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
@@ -191,13 +181,11 @@ public class AuthenticateController : ControllerBase
         return Ok("Password reset link sent to email");
     }
 
-    /// <summary>
-    /// Confirm email registration
-    /// </summary>
-    /// <response code="308">Confirmed and redirect to login page.</response>
-    /// <response code="404">User not found.</response>
-    /// <response code="500">Ops! Something went wrong.</response>
     [HttpGet]
+    [SwaggerOperation("Confirm email registration")]
+    [SwaggerResponse(StatusCodes.Status308PermanentRedirect, "Confirmed and redirect to login page.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User not found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Something went wrong.")]
     public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
@@ -219,7 +207,7 @@ public class AuthenticateController : ControllerBase
         var confirmationLink =
             Url.Action("ConfirmEmail", "Authenticate", new { token, email = user.Email }, Request.Scheme);
 
-        EmailService emailService = new EmailService();
+        var emailService = new EmailService();
 
         return emailService.SendConfirmEmail(user.Email!, confirmationLink!);
     }

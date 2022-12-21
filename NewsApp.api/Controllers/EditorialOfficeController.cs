@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Models;
 using NewsApp.api.Settings;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace NewsApp.api.Controllers;
 
@@ -17,13 +18,11 @@ public class EditorialOfficeController : ControllerBase
         _officeService = officeService;
     }
 
-    /// <summary>
-    /// Create new editorial office
-    /// </summary>
-    /// <response code="201">Office created.</response>
-    /// <response code="400">Editorial office exists.</response>
-    /// <response code="500">Ops! Can't create office.</response>
     [HttpPost]
+    [SwaggerOperation("Create new editorial office")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Office created.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Editorial office exists.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't create office.")]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Create([FromBody] NewOffice office)
     {
@@ -41,13 +40,11 @@ public class EditorialOfficeController : ControllerBase
         return Created(nameof(Create), result.Data);
     }
 
-    /// <summary>
-    /// Get office info by name
-    /// </summary>
-    /// <response code="200">Return office.</response>
-    /// <response code="404">Not found an office.</response>
     [HttpGet]
     [Route("{editorialOfficeName}")]
+    [SwaggerOperation("Get office info by name")]
+    [SwaggerResponse(StatusCodes.Status200OK, type: typeof(OfficeInfo))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not found an office.")]
     public async Task<IActionResult> GetByName([FromRoute] string editorialOfficeName)
     {
         var editorialOffice = await _officeService.GetByName(editorialOfficeName);
@@ -57,13 +54,11 @@ public class EditorialOfficeController : ControllerBase
         return Ok(editorialOffice);
     }
 
-    /// <summary>
-    /// Get office info by name
-    /// </summary>
-    /// <response code="200">Return office.</response>
-    /// <response code="404">Not found an office.</response>
     [HttpGet]
     [Authorize]
+    [SwaggerOperation("Get office info by name")]
+    [SwaggerResponse(StatusCodes.Status200OK, type: typeof(OfficeInfo))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not found an office.")]
     public async Task<IActionResult> GetById([FromQuery] string id)
     {
         var editorialOffice = await _officeService.GetById(id);
@@ -73,14 +68,12 @@ public class EditorialOfficeController : ControllerBase
         return Ok(editorialOffice);
     }
 
-    /// <summary>
-    /// Get office info by name
-    /// </summary>
-    /// <response code="204">Deleted.</response>
-    /// <response code="404">Not found an office/user don't have office.</response>
-    /// <response code="500">Ops! Problem when deleting office.</response>
     [HttpDelete]
     [Authorize]
+    [SwaggerOperation("Delete office")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Deleted.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Not found an office/user don't have office.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Problem when deleting office.")]
     public async Task<IActionResult> Delete([FromQuery] string userId, string editorialOfficeId)
     {
         if (!await _officeService.HasEditorialOffice(userId))
@@ -89,7 +82,7 @@ public class EditorialOfficeController : ControllerBase
         var editorialOffice = await _officeService.GetById(editorialOfficeId);
         if (editorialOffice is null)
             return NotFound("Editorial office not found");
-        
+
         var result = await _officeService.Delete(userId, editorialOfficeId);
 
         if (!result.Success)
