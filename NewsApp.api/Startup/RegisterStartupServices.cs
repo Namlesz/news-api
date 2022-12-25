@@ -150,8 +150,6 @@ public static class RegisterStartupServices
                               "Enter 'bearer' [space] and then your token in the text input below.\r\n\r\n" +
                               "Example: 'bearer {{token}}'",
             });
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
     }
 }
