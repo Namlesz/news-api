@@ -11,14 +11,14 @@ public class EmailService
 
     public EmailService()
     {
-        var password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? throw new InvalidOperationException();
-        var email = Environment.GetEnvironmentVariable("EMAIL_ACCOUNT") ?? throw new InvalidOperationException();
+        var password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? throw new InvalidOperationException("Brak zmiennej środowiskowej EMAIL_PASSWORD");
+        var email = Environment.GetEnvironmentVariable("EMAIL_ACCOUNT") ?? throw new InvalidOperationException("Brak zmiennej środowiskowej EMAIL_ACCOUNT");
 
-        _mailMessage = new MailMessage();
-        _mailMessage.From = new MailAddress(email);
+        _mailMessage = new();
+        _mailMessage.From = new(email);
         _mailMessage.IsBodyHtml = true;
 
-        _smtpClient = new SmtpClient("smtp.gmail.com", 587);
+        _smtpClient = new("smtp.gmail.com", 587);
         _smtpClient.Credentials = new System.Net.NetworkCredential(email, password);
         _smtpClient.EnableSsl = true;
     }
@@ -82,7 +82,7 @@ public class EmailService
         }
         catch (Exception ex)
         {
-            bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
             if (isDevelopment)
                 Console.WriteLine(ex);
         }
