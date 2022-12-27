@@ -7,10 +7,10 @@ using NewsApp.api.Controllers;
 using NewsApp.api.Models;
 using NewsApp.api.Repositories;
 using NewsApp.api.Services;
-using NewsApp.api.Settings;
 
 namespace NewsApp.Test.tests;
 
+[TestFixture]
 public class UserTests
 {
     private IMongoDatabase _database = null!;

@@ -8,10 +8,10 @@ using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Models;
 using NewsApp.api.Repositories;
 using NewsApp.api.Services;
-using NewsApp.api.Settings;
 
 namespace NewsApp.Test.tests;
 
+[TestFixture]
 public class OfficeTests
 {
     private IMongoDatabase _database = null!;
@@ -72,10 +72,12 @@ public class OfficeTests
         var okResult = actionResult as OkObjectResult;
 
         var office = okResult?.Value as OfficeInfo;
-
-        Assert.That(office?.Name, Is.EqualTo("Cracovia News"));
-        Assert.That(office?.Town, Is.EqualTo("Cracovia"));
-        Assert.That(office?.OwnerInfo, Is.EqualTo("Jan Kowalski"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(office?.Name, Is.EqualTo("Cracovia News"));
+            Assert.That(office?.Town, Is.EqualTo("Cracovia"));
+            Assert.That(office?.OwnerInfo, Is.EqualTo("Jan Kowalski"));
+        });
     }
 
     [Test]
@@ -100,18 +102,9 @@ public class OfficeTests
         Assert.That(badResult?.Value, Is.EqualTo("Editorial office already exists"));
     }
 
-    // [Test]
-    // [Description("Create() -> InValid model")]
-    // public async Task InvalidEditorialOfficeModel()
-    // {
-    //     var editorialOffice = new EditorialOffice()
-    //     {
-    //         OwnerId = "12345678-1234-1234-1234-123456789129"
-    //     };
-    //
-    //     var actionResult = await _controller.Create(editorialOffice);
-    //     var badResult = actionResult as BadRequestObjectResult;
-    //
-    //     Assert.That(badResult?.Value, Is.EqualTo("All fields must be filled"));
-    // }
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        MongoDbCreator.Dispose();
+    }
 }
