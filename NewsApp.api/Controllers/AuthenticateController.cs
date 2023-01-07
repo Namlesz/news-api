@@ -139,7 +139,7 @@ public class AuthenticateController : ControllerBase
         if (!await SendConfirmationEmail(user))
             return Problem("Confirmation email failed to send.");
 
-        return Ok("User created successfully! Pleas confirm your email.");
+        return Ok("User created successfully! Please confirm your email.");
     }
 
     [HttpPost]

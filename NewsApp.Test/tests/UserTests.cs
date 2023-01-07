@@ -44,10 +44,8 @@ public class UserTests
         var collection = _database.GetCollection<UserInfo>("Users");
         collection.InsertOne(exampleRedactor);
         collection.InsertOne(exampleEditor);
-
         var mockUserManager = new Mock<UserManager<ApplicationUser>>(new Mock<IUserStore<ApplicationUser>>().Object,
             null, null, null, null, null, null, null, null);
-
         mockUserManager.Setup(
                 manager => manager.FindByIdAsync(It.IsAny<string>()))
             .Returns<string>(x =>
@@ -61,15 +59,11 @@ public class UserTests
                 }
                 return Task.FromResult(new ApplicationUser())!;
             });
-       
-
         mockUserManager.Setup(
                 x => x.UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Success);
-
         var userLogic = new UserService(mockUserManager.Object);
         var userRepo = new UsersRepository(collection);
-
         _controller = new UserController(userRepo, userLogic);
     }
 
@@ -81,11 +75,14 @@ public class UserTests
         var okResult = actionResult as OkObjectResult;
 
         var user = okResult?.Value as UserInfo;
-
-        Assert.That(user?.Id.ToString(), Is.EqualTo(IdRedactor));
-        Assert.That(user?.Name, Is.EqualTo("Adam"));
-        Assert.That(user?.Surname, Is.EqualTo("Kowalski"));
-        Assert.That(user?.Email, Is.EqualTo("adam.kowalski@gmail.com"));
+        Assert.That(user, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(user?.Id.ToString(), Is.EqualTo(IdRedactor));
+            Assert.That(user?.Name, Is.EqualTo("Adam"));
+            Assert.That(user?.Surname, Is.EqualTo("Kowalski"));
+            Assert.That(user?.Email, Is.EqualTo("adam.kowalski@gmail.com"));
+        });
     }
 
     [Test]

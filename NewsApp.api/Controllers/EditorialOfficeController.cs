@@ -21,14 +21,14 @@ public class EditorialOfficeController : ControllerBase
     [HttpPost]
     [SwaggerOperation("Create new editorial office")]
     [SwaggerResponse(StatusCodes.Status201Created, "Office created.")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Editorial office exists.")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "Editorial office exists.")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "Ops! Can't create office.")]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Create([FromBody] NewOffice office)
     {
         if (await _officeService.IsExists(office.Name))
         {
-            return BadRequest("Editorial office already exists");
+            return Conflict("Editorial office already exists");
         }
 
         var result = await _officeService.Create(office);
