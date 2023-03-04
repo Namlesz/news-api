@@ -21,7 +21,8 @@ public class ArticleController : ControllerBase
     [Authorize]
     [SwaggerOperation("Save article to database")]
     [SwaggerResponse(StatusCodes.Status200OK, "Article created.")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Wrong content/image type.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Wrong image type.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Error, can't create article.")]
     public async Task<IActionResult> CreateArticle([FromForm] NewArticle article)
     {
         if (!_articleService.IsAcceptedImageType(article.Image))
@@ -32,7 +33,7 @@ public class ArticleController : ControllerBase
         var result = await _articleService.AddArticle(article);
         if (!result.Success)
         {
-            return BadRequest(result.Message);
+            return Problem(result.Message);
         }
 
         return Ok(new { id = result.Data!.Id });

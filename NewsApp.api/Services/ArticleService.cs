@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Text;
 using NewsApp.api.Interfaces.Logic;
 using NewsApp.api.Interfaces.Repositories;
 using NewsApp.api.Models;
@@ -10,8 +9,8 @@ public class ArticleService : IArticleService
 {
     private readonly IArticleRepository _articleRepository;
     private readonly IUserService _userService;
-    private readonly List<string> _imageTypes = new() { ".jpeg", ".png", ".jpg" };
-    private readonly List<string> _contentType = new() { ".html" };
+    private static readonly List<string> ImageTypes = new() { ".jpeg", ".png", ".jpg" };
+    private static readonly List<string> ContentType = new() { ".html" };
 
     public ArticleService(IArticleRepository articleRepository, IUserService userService)
     {
@@ -20,10 +19,10 @@ public class ArticleService : IArticleService
     }
 
     public bool IsAcceptedContentType(IFormFile file)
-        => CheckExtension(file, _contentType);
+        => CheckExtension(file, ContentType);
 
     public bool IsAcceptedImageType(IFormFile file)
-        => CheckExtension(file, _imageTypes);
+        => CheckExtension(file, ImageTypes);
 
     public async Task<BaseTypeResult<Article>> AddArticle(NewArticle data)
     {
@@ -47,7 +46,7 @@ public class ArticleService : IArticleService
         // Read image
         var readImage = await ReadFile(data.Image);
 
-        var article = new ArticleDto()
+        var article = new ArticleDto
         {
             Title = data.Title,
             AuthorId = data.AuthorId,
