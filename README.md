@@ -52,8 +52,7 @@ To run test set terminal in the Tests project directory and run the following co
 
 - Better to change location for connection string to .net secret manager.
 - Some tests are not working properly.
-- Architecture of the project is not perfect. Better approach maybe be use CQRS pattern with MediatR and use onion
-  architecture or layer architecture instead of monolit.
+- The architecture of the project is not perfect. A better approach might be to use the CQRS pattern with Mediator and use an onion or layered architecture instead of a monolithic one.
 
 ## License
 
